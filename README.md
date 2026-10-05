@@ -1,25 +1,24 @@
-# <Şirket Adı> — Grup G
+# <PrimeBee> — Grup G
 
 VBA II (Veri Bilimi ve Analitik) dersi kapsamındaki **veri şirketi simülasyonu** çalışma deposu.
 
-## Şirket
+## PrimeBee
 
 | Alan | Değer |
 |---|---|
-| Şirket adı | <Hafta 1'de seçilecek> |
+| Şirket adı | PrimeBee |
 | Sektör | Dijital Pazarlama |
-| Teknoloji kararı | <dil + kütüphaneler, örn. "Python · pandas · matplotlib"> |
+| Teknoloji kararı | Dil:Python,SQL Kütüphaneler:Pandas,Numpy,Sicikit-learn,Statsmodels Görselleştirme:Matplotlib,Seaborn,Plotly,Streamlit|
 
-> Teknoloji serbesttir; karar Hafta 1'de şirketçe verilip buraya yazılır.
 
 ## Üyeler
 
 Kendi satırınızı başlangıç rolünüzle ekleyin. Lider `PM`'dir; diğer üç üye PM'nin işe alımıyla başlangıç rollerine yerleştirilir. Roller Görev 1–3 boyunca dönem planı §1.3'e göre döner:
 
-- Ad Soyad — PM (lider)
-- Ad Soyad — BE (başlangıç rolü)
-- Ad Soyad — FE (başlangıç rolü)
-- Ad Soyad — DQ (başlangıç rolü, veri analisti ve kalite)
+- Dilara BAŞER — PM (lider)
+- Özge Nur DOĞU — BE (başlangıç rolü)
+- Tuana GÜRKAN — FE (başlangıç rolü)
+- Nuri Enes SEYHAN — DQ (başlangıç rolü, veri analisti ve kalite)
 
 ## Klasör Yapısı
 
