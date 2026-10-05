@@ -1,4 +1,4 @@
-# <PrimeBee> — Grup G
+# PrimeBee - Grup G
 
 VBA II (Veri Bilimi ve Analitik) dersi kapsamındaki **veri şirketi simülasyonu** çalışma deposu.
 
