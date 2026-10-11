@@ -25,9 +25,3 @@ def generate_random_number():
 
 if __name__ == "__main__":
     generate_random_numbers()
-
-
-
-
-  
-  
