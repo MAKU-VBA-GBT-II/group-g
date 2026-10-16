@@ -1,0 +1,32 @@
+# AGENTS.md — PrimeBee (Grup G) skill envanteri
+
+Bu dosya, PrimeBee ekibinin skill envanteridir: hangi skill nerede, kime ait ve ne işe yarar. Her üye kendi skill’ini eklediğinde bu tabloya bir satır ekler.
+
+## Depo bağlamı
+
+- **Şirket:** PrimeBee — Grup G · **Sektör:** Dijital pazarlama
+- **Teknoloji:** Python · pandas · matplotlib (görselleştirme: PNG)
+- **Dönem planı:** [ders/AGENTS.md](https://github.com/MAKU-VBA-GBT-II/ders/blob/main/AGENTS.md)
+- **Klasörler:** `src/` kod · `data/` veri · `visuals/` grafikler · `docs/` sözlük ve analiz · `tests/` test senaryoları ve kayıtları · `reports/` sprint raporları · `skills/` ajan skill'leri
+
+## Skill envanteri
+
+| Skill | Yol | Sahibi (rol) | Ne işe yarar | Nasıl kullanılır |
+|---|---|---|---|---|
+| pm-rapor | `skills/pm-rapor/SKILL.md` | Dilara Başer (PM) | Haftalık sprint raporunu (`reports/report-wXX.md`) GitHub'daki Issue, yorum ve commit izlerinden derler. | Ajana: "pm-rapor skill'ini kullanarak report-w03.md yaz" |
+| be-veri | `skills/be-veri/SKILL.md` | BE | Haftalık kampanya performans verisini (kanal, gösterim, tıklama, harcama, dönüşüm, gelir) sabit tohumla üretir, şemayı yazar. | BE ekleyecek |
+| dq-analiz | `skills/dq-analiz/SKILL.md` | DQ | Metrikleri (toplam gelir, ortalama ROAS, kanal kırılımları, top-3) hesaplar, bulguları `docs/analiz-g1.md`'ye yazar. | DQ ekleyecek |
+| fe-gorsel | `skills/fe-gorsel/SKILL.md` | FE | Haftalık gelir zaman serisini ve kanal kırılımını PNG olarak üretir. | FE ekleyecek |
+| dq-test | `skills/dq-test/SKILL.md` | DQ | Veri kalitesi test senaryolarını (`tests/test-cases.md`) şemaya göre yazar. | DQ ekleyecek |
+
+> **Kural:** Roller görevden göreve döner (plan §1.3); skill'ler rolle birlikte el değiştirir. Yeni sahibi skill'i günceller ve bu tablodaki "Sahibi" sütununu değiştirir.
+
+## Ajanlar için çalışma kuralları
+
+* Veri sentetiktir; gerçek kişi verisi yoktur ve depoya asla girmez. Tüm veriler simülasyon ürünüdür.
+* Veri üretimi sabit tohum (42) ile tekrarlanabilir olmalıdır.
+* Yeni skill eklenince bu dosya güncellenir.
+* "GitHub'da yoksa, yapılmamıştır": her iş bir Issue'ya bağlıdır; bitince Issue'ya kanıt yorumu (commit hash + dosya) yazılır.
+* Hafta 5'ten itibaren `main`'e yalnızca PR ile girilir; kod/veri PR'ları DQ onayı olmadan merge edilmez.
+* Bir adım bitince devir teslim yorumu yazılır; bu yorum bir sonraki kişinin başlama iznidir.
+* FE, `G1-gorsel` Issue'suna iki grafik taslağı eklemeden grafik üretmeye başlamaz.
