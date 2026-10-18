@@ -1,0 +1,1 @@
+| FE (Görselleştirici) | skills/fe-gorsel/SKILL.md | Kampanya performans verilerinden zaman serisi ve kanal kırılım grafiklerini üretir. |
