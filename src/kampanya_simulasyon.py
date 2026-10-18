@@ -18,6 +18,7 @@ from pathlib import Path
 SEED = 42             # sabit tohum: aynı tohum -> aynı dosya
 HAFTA_SAYISI = 52     # kaç hafta üretilecek
 BASLANGIC = date(2025, 10, 6)  # bir Pazartesi
+BITIS = BASLANGIC + timedelta(weeks=HAFTA_SAYISI - 1)
 
 # Her kanal için sabit aralıklar
 # gosterim: haftalık gösterim | ctr: tıklama oranı | cvr: tıklamadan dönüşüm oranı
@@ -31,6 +32,7 @@ KANALLAR = {
 }
 
 BASLIK = ["kampanya_id", "tarih", "kanal", "gosterim", "tiklama", "donusum", "harcama_tl", "gelir_tl"]
+BEKLENEN_BASLIK = ["kampanya_id", "tarih", "kanal", "gosterim", "tiklama", "donusum", "harcama_tl", "gelir_tl"]
 
 # Veri sözlüğündeki genel sınırlar
 GOSTERIM_MIN, GOSTERIM_MAX = 5000, 250000
@@ -70,6 +72,8 @@ def hata(mesaj):
 
 def dogrula(satirlar):
     """docs/veri-sozlugu-g1.md içindeki TÜM kuralların kontrolü."""
+    if BASLIK != BEKLENEN_BASLIK:
+        hata("CSV sütun adları veya sırası veri sözlüğüyle uyuşmuyor")
     if len(satirlar) < 100:
         hata("en az 100 satır olmalı")
     if len(satirlar) != HAFTA_SAYISI * len(KANALLAR):
@@ -78,6 +82,9 @@ def dogrula(satirlar):
     idler = [s[0] for s in satirlar]
     if len(set(idler)) != len(idler):
         hata("kampanya_id benzersiz olmalı")
+    beklenen_idler = {f"K{i:03d}" for i in range(1, len(satirlar) + 1)}
+    if set(idler) != beklenen_idler:
+        hata("kampanya_id değerleri K001'den başlayarak sıralı olmalı")
 
     kanal_sayilari = {}
     for s in satirlar:
@@ -86,8 +93,11 @@ def dogrula(satirlar):
             hata(f"kampanya_id biçimi hatalı: {s}")
         if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", tarih):
             hata(f"tarih biçimi yyyy-mm-dd olmalı: {s}")
-        if datetime.strptime(tarih, "%Y-%m-%d").weekday() != 0:
+        tarih_degeri = datetime.strptime(tarih, "%Y-%m-%d").date()
+        if tarih_degeri.weekday() != 0:
             hata(f"tarih bir Pazartesi olmalı: {s}")
+        if not (BASLANGIC <= tarih_degeri <= BITIS):
+            hata(f"tarih sözlükteki aralıkta olmalı: {s}")
         if kanal not in KANALLAR:
             hata(f"geçersiz kanal: {s}")
         kanal_sayilari[kanal] = kanal_sayilari.get(kanal, 0) + 1
@@ -109,8 +119,8 @@ def dogrula(satirlar):
         if float(gelir) < 0:
             hata(f"gelir negatif olamaz: {s}")
 
-    if len(kanal_sayilari) < 4:
-        hata("en az 4 farklı kanal olmalı")
+    if len(KANALLAR) != 5 or set(kanal_sayilari) != set(KANALLAR):
+        hata("veri tam olarak sözlükteki 5 kanalı içermeli")
     if any(n != HAFTA_SAYISI for n in kanal_sayilari.values()):
         hata("her kanalda hafta sayısı kadar satır olmalı")
 
