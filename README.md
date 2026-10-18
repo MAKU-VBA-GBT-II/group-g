@@ -19,6 +19,7 @@ Kendi satırınızı başlangıç rolünüzle ekleyin. Lider `PM`'dir; diğer ü
 - Özge Nur DOĞU — BE (başlangıç rolü)
 - Tuana GÜRKAN — FE (başlangıç rolü)
 - Nuri Enes SEYHAN — DQ (başlangıç rolü, veri analisti ve kalite)
+- Ceren DOĞRUL — Junior
 
 ## Klasör Yapısı
 
