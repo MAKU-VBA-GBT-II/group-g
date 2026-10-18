@@ -1,20 +1,23 @@
-"""G1 - Dijital pazarlama kampanya performansı simülasyonu.
+"""G1 - Dijital pazarlama kampanya performansı simülasyonu (v2).
 
-Amaç : 5 kanal x 26 hafta = 130 satırlık sentetik kampanya verisi üretmek.
+Amaç : 5 kanal x 52 hafta = 260 satırlık sentetik kampanya verisi üretmek.
 Çıktı: data/kampanya-performans.csv
 Kural: SEED sabit olduğu için betik her çalıştığında BİREBİR aynı dosyayı üretir.
+       Dosya yazılmadan önce veri sözlüğündeki TÜM kurallar kontrol edilir;
+       bir kural bozuksa betik hata verir ve dosya yazılmaz.
 
 Çalıştırma (deponun kök klasöründe):
     python src/kampanya_simulasyon.py
 """
 import csv
 import random
-from datetime import date, timedelta
+import re
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
-SEED = 42            # sabit tohum: aynı tohum -> aynı dosya
-HAFTA_SAYISI = 26    # kaç hafta üretilecek
-BASLANGIC = date(2026, 3, 2)  # bir Pazartesi
+SEED = 42             # sabit tohum: aynı tohum -> aynı dosya
+HAFTA_SAYISI = 52     # kaç hafta üretilecek
+BASLANGIC = date(2025, 10, 6)  # bir Pazartesi
 
 # Her kanal için sabit aralıklar
 # gosterim: haftalık gösterim | ctr: tıklama oranı | cvr: tıklamadan dönüşüm oranı
@@ -29,11 +32,20 @@ KANALLAR = {
 
 BASLIK = ["kampanya_id", "tarih", "kanal", "gosterim", "tiklama", "donusum", "harcama_tl", "gelir_tl"]
 
+# Veri sözlüğündeki genel sınırlar
+GOSTERIM_MIN, GOSTERIM_MAX = 5000, 250000
+
 KOK = Path(__file__).resolve().parent.parent
 HEDEF = KOK / "data" / "kampanya-performans.csv"
 
 
+def tutar_yaz(x):
+    """Tutarı HER ZAMAN tam 2 ondalık basamakla metne çevirir (4717.0 -> '4717.00')."""
+    return f"{x:.2f}"
+
+
 def satirlari_uret():
+    """Satırları METİN olarak döndürür: CSV'ye yazılacak hâliyle birebir aynı."""
     rng = random.Random(SEED)  # kendi rastgele üretecimiz, başka koddan etkilenmez
     satirlar = []
     sayac = 1
@@ -46,25 +58,66 @@ def satirlari_uret():
             harcama = round(tiklama * rng.uniform(*p["cpc"]), 2)
             gelir = round(donusum * rng.uniform(*p["sepet"]), 2)
             satirlar.append([f"K{sayac:03d}", tarih.isoformat(), kanal,
-                             gosterim, tiklama, donusum, harcama, gelir])
+                             str(gosterim), str(tiklama), str(donusum),
+                             tutar_yaz(harcama), tutar_yaz(gelir)])
             sayac += 1
     return satirlar
 
 
+def hata(mesaj):
+    raise ValueError(mesaj)
+
+
 def dogrula(satirlar):
-    """Veri sözlüğündeki kuralların kodla kontrolü."""
-    assert len(satirlar) >= 100, "en az 100 satır olmalı"
-    assert len({s[2] for s in satirlar}) >= 4, "en az 4 farklı kanal olmalı"
+    """docs/veri-sozlugu-g1.md içindeki TÜM kuralların kontrolü."""
+    if len(satirlar) < 100:
+        hata("en az 100 satır olmalı")
+    if len(satirlar) != HAFTA_SAYISI * len(KANALLAR):
+        hata("satır sayısı kanal x hafta sayısına eşit olmalı")
+
+    idler = [s[0] for s in satirlar]
+    if len(set(idler)) != len(idler):
+        hata("kampanya_id benzersiz olmalı")
+
+    kanal_sayilari = {}
     for s in satirlar:
-        _, _, _, gosterim, tiklama, donusum, harcama, gelir = s
-        assert tiklama <= gosterim, f"tıklama gösterimden fazla: {s}"
-        assert donusum <= tiklama, f"dönüşüm tıklamadan fazla: {s}"
-        assert harcama > 0 and gelir >= 0, f"negatif/sıfır tutar: {s}"
+        kid, tarih, kanal, gosterim, tiklama, donusum, harcama, gelir = s
+        if not re.fullmatch(r"K\d{3}", kid):
+            hata(f"kampanya_id biçimi hatalı: {s}")
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", tarih):
+            hata(f"tarih biçimi yyyy-mm-dd olmalı: {s}")
+        if datetime.strptime(tarih, "%Y-%m-%d").weekday() != 0:
+            hata(f"tarih bir Pazartesi olmalı: {s}")
+        if kanal not in KANALLAR:
+            hata(f"geçersiz kanal: {s}")
+        kanal_sayilari[kanal] = kanal_sayilari.get(kanal, 0) + 1
+        for ad, deger in (("gosterim", gosterim), ("tiklama", tiklama), ("donusum", donusum)):
+            if not re.fullmatch(r"\d+", deger):
+                hata(f"{ad} tam sayı olmalı: {s}")
+        for ad, deger in (("harcama_tl", harcama), ("gelir_tl", gelir)):
+            if not re.fullmatch(r"\d+\.\d{2}", deger):
+                hata(f"{ad} tam 2 ondalık basamaklı olmalı: {s}")
+        g, t, d = int(gosterim), int(tiklama), int(donusum)
+        if not (GOSTERIM_MIN <= g <= GOSTERIM_MAX):
+            hata(f"gösterim aralık dışı: {s}")
+        if not (1 <= t <= g):
+            hata(f"tıklama 1 ile gösterim arasında olmalı: {s}")
+        if not (0 <= d <= t):
+            hata(f"dönüşüm 0 ile tıklama arasında olmalı: {s}")
+        if float(harcama) <= 0:
+            hata(f"harcama sıfırdan büyük olmalı: {s}")
+        if float(gelir) < 0:
+            hata(f"gelir negatif olamaz: {s}")
+
+    if len(kanal_sayilari) < 4:
+        hata("en az 4 farklı kanal olmalı")
+    if any(n != HAFTA_SAYISI for n in kanal_sayilari.values()):
+        hata("her kanalda hafta sayısı kadar satır olmalı")
 
 
 def main():
     satirlar = satirlari_uret()
-    dogrula(satirlar)
+    dogrula(satirlar)  # hata varsa buradan öteye geçilmez, dosya yazılmaz
     HEDEF.parent.mkdir(exist_ok=True)
     with open(HEDEF, "w", newline="", encoding="utf-8") as f:
         yazici = csv.writer(f, lineterminator="\n")  # her işletim sisteminde aynı satır sonu
