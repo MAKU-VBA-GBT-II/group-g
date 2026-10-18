@@ -18,6 +18,7 @@ Bu dosya, PrimeBee ekibinin skill envanteridir: hangi skill nerede, kime ait ve 
 | dq-analiz | `skills/dq-analiz/SKILL.md` | DQ | Metrikleri (toplam gelir, ortalama ROAS, kanal kırılımları, top-3) hesaplar, bulguları `docs/analiz-g1.md`'ye yazar. | DQ ekleyecek |
 | fe-gorsel | `skills/fe-gorsel/SKILL.md` | FE | Haftalık gelir zaman serisini ve kanal kırılımını PNG olarak üretir. | FE ekleyecek |
 | dq-test | `skills/dq-test/SKILL.md` | Nuri Enes Seyhan (DQ) | Veri kalitesi test senaryolarını (`tests/test-cases.md`) şemaya göre yazar. | Ajana: "dq-test skill'ini kullanarak tests/test-cases.md dosyasını hazırla" |
+| junior-kontrol | `skills/junior-kontrol/SKILL.md` | Ceren doğrul (Junior, DQ) | BE tesliminden sonra kampanya CSV'sini elle kontrol eder, bulguları raporlar ve iki temel test senaryosunu günceller. | Ajana: "junior-kontrol skill'ini kullanarak G1 verisini kontrol et" |
 
 > **Kural:** Roller görevden göreve döner (plan §1.3); skill'ler rolle birlikte el değiştirir. Yeni sahibi skill'i günceller ve bu tablodaki "Sahibi" sütununu değiştirir.
 
