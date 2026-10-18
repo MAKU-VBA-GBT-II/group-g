@@ -1,7 +1,7 @@
 # G1 — Kampanya Performans Analizi
 
 **Veri:** `data/kampanya-performans.csv` · **Şema:** [`veri-sozlugu-g1.md`](veri-sozlugu-g1.md) v2
-**Kapsam:** 260 kampanya-hafta kaydı, 5 kanal, 2025-10-06–2026-09-28
+**Kapsam:** 5 kanal × 52 hafta = 260 kampanya-hafta kaydı, 2025-10-06–2026-09-28
 **Teslim:** Özge Nur Doğu'nun G1-Analiz Issue'sundaki v2 veri hazır yorumu ve `4617f2a` commit'i doğrulandı.
 **Yöntem:** Para toplamlarında ondalık hassasiyet kullanıldı. Kanal ROAS'ı `kanal geliri / kanal harcaması`; ortalama kampanya ROAS'ı ise 260 satırdaki `gelir / harcama` oranlarının aritmetik ortalamasıdır. Birleşik ROAS ayrıca toplam gelir / toplam harcama olarak verilir. Veriler sentetiktir; gözlemler nedensellik kanıtlamaz.
 
@@ -9,7 +9,7 @@
 
 ### 1. Toplam gelir
 
-260 kaydın toplam geliri **10.541.572,97 TL**, toplam harcaması **1.891.414,54 TL**'dir. Gelirin toplam harcamaya oranı olan birleşik ROAS **5,57x** olarak hesaplanmıştır.
+**10.541.572,97 TL**, tek haftanın veya tek kampanyanın değil, 5 kanalın 52 haftalık dönem boyunca elde ettiği toplam gelirdir. Haftalık ortalama toplam gelir **202.722,56 TL**'dir; aynı dönem için toplam harcama **1.891.414,54 TL**, birleşik ROAS (toplam gelir / toplam harcama) ise **5,57x** olarak hesaplanmıştır.
 
 ### 2. Ortalama kampanya-hafta ROAS
 
