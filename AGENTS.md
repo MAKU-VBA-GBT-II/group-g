@@ -15,7 +15,7 @@ Bu dosya, PrimeBee ekibinin skill envanteridir: hangi skill nerede, kime ait ve 
 |---|---|---|---|---|
 | pm-rapor | `skills/pm-rapor/SKILL.md` | Dilara Başer (PM) | Haftalık sprint raporunu (`reports/report-wXX.md`) GitHub'daki Issue, yorum ve commit izlerinden derler. | Ajana: "pm-rapor skill'ini kullanarak report-w03.md yaz" |
 | be-veri | `skills/be-veri/SKILL.md` | Özge Nur Doğu (BE) | Haftalık kampanya performans verisini (kanal, gösterim, tıklama, harcama, dönüşüm, gelir) sabit tohumla üretir, şemayı yazar. | Ajana: "be-veri skill'ini kullanarak data/kampanya-performans.csv dosyasını üret" |
-| dq-analiz | `skills/dq-analiz/SKILL.md` | DQ | Metrikleri (toplam gelir, ortalama ROAS, kanal kırılımları, top-3) hesaplar, bulguları `docs/analiz-g1.md`'ye yazar. | DQ ekleyecek |
+| dq-analiz | `skills/dq-analiz/SKILL.md` | Nuri Enes Seyhan (DQ) | Kampanya verisinden toplam ve ortalama metrikleri, kanal kırılımlarını, top-3 sıralamasını ve bulguları `docs/analiz-g1.md`'ye yazar. | Ajana: "dq-analiz skill'ini kullanarak G1 kampanya performansını analiz et" |
 | fe-gorsel | `skills/fe-gorsel/SKILL.md` | FE | Haftalık gelir zaman serisini ve kanal kırılımını PNG olarak üretir. | FE ekleyecek |
 | dq-test | `skills/dq-test/SKILL.md` | Nuri Enes Seyhan (DQ) | Veri kalitesi test senaryolarını (`tests/test-cases.md`) şemaya göre yazar. | Ajana: "dq-test skill'ini kullanarak tests/test-cases.md dosyasını hazırla" |
 
