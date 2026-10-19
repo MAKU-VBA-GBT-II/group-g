@@ -1,6 +1,6 @@
 ---
 name: veri-kalitesi-testleri
-description: "G1 kampanya performans verileri için veri sözlüğünü temel alarak dosya, satır sayısı, şema, tür, aralık ve kategori kontrollerini içeren veri kalitesi test senaryoları hazırlarken veya güncellerken kullan."
+description: "G1 kampanya performansı verileri için güncel veri sözlüğüne göre dosya, kayıt sayısı, şema, veri türü, değer aralığı ve kategori kontrollerini içeren kalite test senaryoları hazırlarken veya güncellerken kullan."
 ---
 
 # Veri Kalitesi Test Senaryoları
