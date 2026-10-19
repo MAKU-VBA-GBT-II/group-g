@@ -1,6 +1,6 @@
 ---
 name: dq-test
-description: "Use when preparing or updating G1 campaign performance data-quality test scenarios from the data dictionary, including file, row-count, schema, type, range, and category checks."
+description: "G1 kampanya performans verileri için veri sözlüğünü temel alarak dosya, satır sayısı, şema, tür, aralık ve kategori kontrollerini içeren veri kalitesi test senaryoları hazırlarken veya güncellerken kullan."
 ---
 
 # DQ Test Senaryoları
