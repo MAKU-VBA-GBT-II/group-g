@@ -17,7 +17,7 @@ Bu dosya, PrimeBee ekibinin skill envanteridir: hangi skill nerede, kime ait ve 
 | be-veri | `skills/be-veri/SKILL.md` | Özge Nur Doğu (BE) | Haftalık kampanya performans verisini (kanal, gösterim, tıklama, harcama, dönüşüm, gelir) sabit tohumla üretir, şemayı yazar. | Ajana: "be-veri skill'ini kullanarak data/kampanya-performans.csv dosyasını üret" |
 | dq-analiz | `skills/dq-analiz/SKILL.md` | Nuri Enes Seyhan (DQ) | Metrikleri (toplam gelir, ortalama ROAS, kanal kırılımları ve top-3) hesaplar, bulguları `docs/analiz-g1.md`'ye yazar. | Ajana: "dq-analiz skill'ini kullanarak G1 kampanya performansını analiz et" |
 | fe-gorsel | `skills/fe-gorsel/SKILL.md` | FE | Haftalık gelir zaman serisini ve kanal kırılımını PNG olarak üretir. | FE ekleyecek |
-| dq-test | `skills/dq-test/SKILL.md` | Nuri Enes Seyhan (DQ) | Veri kalitesi test senaryolarını (`tests/test-cases.md`) veri şemasına göre yazar. | Ajana: "dq-test skill'ini kullanarak tests/test-cases.md dosyasını hazırla" |
+| veri-kalitesi-testleri | `skills/veri-kalitesi-testleri/SKILL.md` | Nuri Enes Seyhan (DQ) | Veri kalitesi test senaryolarını (`tests/test-cases.md`) veri şemasına göre yazar. | Ajana: "veri-kalitesi-testleri skill'ini kullanarak tests/test-cases.md dosyasını hazırla" |
 
 > **Kural:** Roller görevden göreve döner (plan §1.3); skill'ler rolle birlikte el değiştirir. Yeni sahibi skill'i günceller ve bu tablodaki "Sahibi" sütununu değiştirir.
 
