@@ -9,14 +9,7 @@ os.makedirs("visuals", exist_ok=True)
 df = pd.read_csv("data/kampanya-performans.csv")
 df.columns = df.columns.str.strip().str.lower()
 
-# ROAS Sütun Hesabı
-if "harcama_tl" in df.columns and "gelir_tl" in df.columns:
-    df["roas_val"] = df["gelir_tl"] / df["harcama_tl"]
-elif "roas" in df.columns:
-    df["roas_val"] = df["roas"]
-else:
-    df["roas_val"] = df.iloc[:, -2]
-
+# Sütun isimlerini belirle
 week_col = next(
     (
         c
@@ -32,6 +25,14 @@ revenue_col = next(
         if any(k in c for k in ["gelir", "revenue", "ciro"])
     ),
     "gelir_tl",
+)
+spend_col = next(
+    (
+        c
+        for c in df.columns
+        if any(k in c for k in ["harcama", "spend", "gider"])
+    ),
+    "harcama_tl",
 )
 channel_col = next(
     (
@@ -57,7 +58,6 @@ ax.plot(
     color="#1f77b4",
 )
 
-# Başlık ve Alt Başlığı Birbirinden Ayırıyoruz
 plt.title(
     "Haftalık Toplam Gelir Trendi", fontsize=14, fontweight="bold", pad=25
 )
@@ -85,10 +85,15 @@ plt.savefig("visuals/gelir-zaman-serisi.png", dpi=300)
 plt.close()
 
 # ---------------------------------------------------------
-# 2. GRAFİK: Kırılım (Kanala Göre Ortalama ROAS)
+# 2. GRAFİK: Kırılım (Kanala Göre Birleşik ROAS: Toplam Gelir / Toplam Harcama)
 # ---------------------------------------------------------
 fig, ax = plt.subplots(figsize=(10, 5.5))
-df_channel = df.groupby(channel_col, as_index=False)["roas_val"].mean()
+
+# Analiz dokümanındaki yöntem: Toplam Gelir / Toplam Harcama (Birleşik ROAS)
+df_channel = df.groupby(channel_col, as_index=False).agg(
+    {revenue_col: "sum", spend_col: "sum"}
+)
+df_channel["roas_val"] = df_channel[revenue_col] / df_channel[spend_col]
 
 bars = ax.bar(
     df_channel[channel_col],
@@ -97,10 +102,9 @@ bars = ax.bar(
     width=0.5,
 )
 
-# Başlık Düzeltmesi
 plt.title(
-    "Pazarlama Kanalına Göre Ortalama ROAS",
-    fontsize=14,
+    "Pazarlama Kanalına Göre Birleşik ROAS (Toplam Gelir / Toplam Harcama)",
+    fontsize=13,
     fontweight="bold",
     pad=25,
 )
@@ -115,7 +119,7 @@ plt.text(
 )
 
 plt.xlabel("Kanal", fontsize=11, labelpad=10)
-plt.ylabel("Ortalama ROAS (x)", fontsize=11)
+plt.ylabel("Birleşik ROAS (x)", fontsize=11)
 
 max_y = df_channel["roas_val"].max()
 for bar in bars:
@@ -136,4 +140,6 @@ plt.tight_layout()
 plt.savefig("visuals/kanal-kirilim.png", dpi=300)
 plt.close()
 
-print("Grafikler başlıklar düzeltilerek yeniden üretildi!")
+print(
+    "Grafikler analiz dokümanındaki birleşik ROAS hesabı ile güncellendi!"
+)
