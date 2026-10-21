@@ -27,9 +27,3 @@ Spor ve fitness konularına ilgim olduğu için wger'i seçtim. İncelerken büy
 Bizim kampanya performansı projemiz ile wger farklı alanlarda çalışıyor; wger'i doğrudan projeye eklemek yerine çalışma biçiminden fikir alabilirim. wger'in API ve dokümantasyon yaklaşımı, bizim veri sözlüğümüzün de net ve tek referans olmasının önemini gösteriyor. Kampanya verisinde yeni bir metrik veya kanal eklendiğinde veri sözlüğü, analiz ve grafiklerin birlikte güncellenmesi; sonuçların da test edilmesi gerekir. Böylece farklı ekip üyelerinin ürettiği veri ve görseller aynı tanımlara dayanır.
 
 Mevcut `data/kampanya-performans.csv` dosyası toplu kampanya-hafta kayıtlarından oluşuyor; kişi veya müşteri segmenti içermiyor. Bu nedenle wger'den alınacak fikir, müşteri verisi varmış gibi varsaymak değil; kapsamı ve veri alanları açıkça belgelenmiş, doğrulanabilir bir sistem kurma yaklaşımıdır.
-
-## Kaynaklar
-
-- [wger GitHub deposu](https://github.com/wger-project/wger)
-- [Katkı kılavuzu](https://wger.readthedocs.io/en/latest/contributing.html)
-- [#2540 — API egzersiz çevirilerini dile göre filtreleme PR'ı](https://github.com/wger-project/wger/pull/2540)
