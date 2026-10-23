@@ -1,10 +1,14 @@
-"""G1 - Dijital pazarlama kampanya performansı simülasyonu (v2).
+"""G1 - Dijital pazarlama kampanya performansı simülasyonu (v3).
 
 Amaç : 5 kanal x 52 hafta = 260 satırlık sentetik kampanya verisi üretmek.
 Çıktı: data/kampanya-performans.csv
 Kural: SEED sabit olduğu için betik her çalıştığında BİREBİR aynı dosyayı üretir.
        Dosya yazılmadan önce veri sözlüğündeki TÜM kurallar kontrol edilir;
        bir kural bozuksa betik hata verir ve dosya yazılmaz.
+       Dosya yazıldıktan sonra da başlık satırı ve satır sayısı yeniden kontrol edilir.
+
+Parametreler (KANALLAR) ve formüller docs/veri-sozlugu-g1.md içindeki
+"Simülasyon parametreleri" bölümüyle birebir aynıdır.
 
 Çalıştırma (deponun kök klasöründe):
     python src/kampanya_simulasyon.py
@@ -32,7 +36,6 @@ KANALLAR = {
 }
 
 BASLIK = ["kampanya_id", "tarih", "kanal", "gosterim", "tiklama", "donusum", "harcama_tl", "gelir_tl"]
-BEKLENEN_BASLIK = ["kampanya_id", "tarih", "kanal", "gosterim", "tiklama", "donusum", "harcama_tl", "gelir_tl"]
 
 # Veri sözlüğündeki genel sınırlar
 GOSTERIM_MIN, GOSTERIM_MAX = 5000, 250000
@@ -47,7 +50,11 @@ def tutar_yaz(x):
 
 
 def satirlari_uret():
-    """Satırları METİN olarak döndürür: CSV'ye yazılacak hâliyle birebir aynı."""
+    """Satırları METİN olarak döndürür: CSV'ye yazılacak hâliyle birebir aynı.
+
+    Her satırda rastgele sayılar şu SIRAYLA çekilir: gosterim, ctr, cvr, cpc, sepet.
+    Satır sırası: önce hafta, her haftada kanallar KANALLAR sırasıyla.
+    """
     rng = random.Random(SEED)  # kendi rastgele üretecimiz, başka koddan etkilenmez
     satirlar = []
     sayac = 1
@@ -72,8 +79,6 @@ def hata(mesaj):
 
 def dogrula(satirlar):
     """docs/veri-sozlugu-g1.md içindeki TÜM kuralların kontrolü."""
-    if BASLIK != BEKLENEN_BASLIK:
-        hata("CSV sütun adları veya sırası veri sözlüğüyle uyuşmuyor")
     if len(satirlar) < 100:
         hata("en az 100 satır olmalı")
     if len(satirlar) != HAFTA_SAYISI * len(KANALLAR):
@@ -118,11 +123,23 @@ def dogrula(satirlar):
             hata(f"harcama sıfırdan büyük olmalı: {s}")
         if float(gelir) < 0:
             hata(f"gelir negatif olamaz: {s}")
+        if d == 0 and float(gelir) != 0:
+            hata(f"dönüşüm 0 ise gelir_tl 0.00 olmalı: {s}")
 
     if len(KANALLAR) != 5 or set(kanal_sayilari) != set(KANALLAR):
         hata("veri tam olarak sözlükteki 5 kanalı içermeli")
     if any(n != HAFTA_SAYISI for n in kanal_sayilari.values()):
         hata("her kanalda hafta sayısı kadar satır olmalı")
+
+
+def dosyayi_kontrol_et(yol, satir_sayisi):
+    """Yazılan dosyayı geri okuyup başlığı ve satır sayısını doğrular."""
+    with open(yol, encoding="utf-8", newline="") as f:
+        satirlar = list(csv.reader(f))
+    if satirlar[0] != BASLIK:
+        hata("yazılan dosyanın başlık satırı veri sözlüğüyle uyuşmuyor")
+    if len(satirlar) - 1 != satir_sayisi:
+        hata("yazılan dosyadaki satır sayısı beklenenle uyuşmuyor")
 
 
 def main():
@@ -133,6 +150,7 @@ def main():
         yazici = csv.writer(f, lineterminator="\n")  # her işletim sisteminde aynı satır sonu
         yazici.writerow(BASLIK)
         yazici.writerows(satirlar)
+    dosyayi_kontrol_et(HEDEF, len(satirlar))
     print(f"{len(satirlar)} satır yazıldı: {HEDEF}")
 
 
