@@ -9,13 +9,13 @@
 
 ## Test Koşum Kayıtları
 
-| No | Senaryo | Test Tarihi | Test Eden | Gerçekleşen Sonuç | Durum (Geçti / Kaldı) | İlgili Issue / Not |
-|---:|---|---|---|---|---|---|
-| 1 | Satır sayısı ve sütun varlığı kontrolü | - | - | *Henüz koşulmadı* | - | #22 |
-| 2 | Kanal kategori değerleri ve dağılımı | - | - | *Henüz koşulmadı* | - | #21 / #22 |
-| 3 | Tıklama/Gösterim ve Dönüşüm/Tıklama oran mantığı | - | - | *Henüz koşulmadı* | - | #22 |
-| 4 | Tarih formatı, aralık ve tutar format kontrolü | - | - | *Henüz koşulmadı* | - | #22 |
-| 5 | Boş hücre ve eksik veri kontrolü | - | - | *Henüz koşulmadı* | - | #22 |
+| No | Senaryo | Test Tarihi | Test Eden | Beklenen Sonuç | Gerçekleşen Sonuç | Durum (Geçti / Kaldı) | İlgili Issue / Not |
+|---:|---|---|---|---|---|---|---|
+| 1 | Satır sayısı ve sütun varlığı kontrolü | - | - | - | *Henüz koşulmadı* | - | #22 |
+| 2 | Kanal kategori değerleri ve dağılımı | 2026-10-23 | Ceren Doğrul | Yalnızca izin verilen 5 kanal bulunmalı; her kanalda 52 kayıt olmalı. | 5 kanal bulundu: Google Ads (52), Meta Ads (52), TikTok Ads (52), E-posta (52), SEO (52). Beklenmeyen/eksik kanal yok; 260 kayıt kontrol edildi. | Geçti | #21 |
+| 3 | Tıklama/Gösterim ve Dönüşüm/Tıklama oran mantığı | - | - | - | *Henüz koşulmadı* | - | #22 |
+| 4 | Tarih formatı, aralık ve tutar format kontrolü | - | - | - | *Henüz koşulmadı* | - | #22 |
+| 5 | Boş hücre ve eksik veri kontrolü | - | - | - | *Henüz koşulmadı* | - | #22 |
 
 ---
 
