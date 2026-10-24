@@ -25,6 +25,29 @@ Beş senaryo, `data/kampanya-performans.csv` dosyasının mevcut sürümünde te
 | 4 | Tipler, biçimler ve değer aralıkları | 2026-10-24 | Nuri Enes Seyhan (DQ) | Tüm kayıtlar v3 tip, biçim, tarih, kimlik ve değer aralıklarına uymalı; tıklama gösterimi, dönüşüm tıklamayı aşmamalı. | 260 kaydın tamamında benzersiz `K001`–`K260` kimlikleri, Pazartesi tarihleri (`2025-10-06`–`2026-09-28`), tam iki ondalıklı tutarlar, sayısal aralıklar ve tıklama/dönüşüm ilişkileri doğrulandı. | Geçti |
 | 5 | Kanal kategori değerleri | 2026-10-24 | Nuri Enes Seyhan (DQ) | Yalnızca izin verilen 5 kanal bulunmalı; her kanalda 52 kayıt olmalı. | Google Ads (52), Meta Ads (52), TikTok Ads (52), E-posta (52), SEO (52); beklenmeyen/eksik kategori yok. | Geçti |
 
+## Genişletilmiş DQ Test Koşumu — 2026-10-24
+
+- **Komut:** `python src/dq_test.py`
+- **Araç:** Copilot SDK in VS Code / PowerShell
+- **Python:** 3.14.0
+- **Test edilen veri commit'i:** `8ce74b274907d19249218c73d13de174a27ec3cd`
+- **Sonuç:** 12 senaryonun tamamı geçti; üretici betiği mevcut CSV üzerine yazmadan çalıştırıldı.
+
+| ID | Senaryo | Test Tarihi | Test Eden | Beklenen Sonuç | Gerçekleşen Sonuç | Durum |
+|---|---|---|---|---|---|---|
+| TC-01 | Dosya var ve okunabilir | 2026-10-24 | Nuri Enes Seyhan (DQ) | CSV mevcut ve UTF-8 olarak okunabilir olmalı. | Dosya bulundu ve okundu. | Geçti |
+| TC-02 | Tam veri satırı sayısı | 2026-10-24 | Nuri Enes Seyhan (DQ) | Veri sözlüğündeki 260 kayıt bulunmalı. | Başlık hariç 260 kayıt bulundu. | Geçti |
+| TC-03 | Sütun adları ve sırası | 2026-10-24 | Nuri Enes Seyhan (DQ) | Sözlükteki 8 sütun tam ad ve sırada olmalı. | 8 sütun ve sırası doğrulandı. | Geçti |
+| TC-04 | Kampanya kimlikleri | 2026-10-24 | Nuri Enes Seyhan (DQ) | Kimlikler K001–K260 aralığında, sıralı ve benzersiz olmalı. | Tüm kimlikler sıralı, biçime uygun ve benzersiz bulundu. | Geçti |
+| TC-05 | Tarih biçimi, günü ve aralığı | 2026-10-24 | Nuri Enes Seyhan (DQ) | Tarihler ISO biçiminde, Pazartesi ve tanımlı aralıkta olmalı. | Tarihlerin tamamı koşulları sağladı. | Geçti |
+| TC-06 | Sayısal türler, sınırlar ve ilişkiler | 2026-10-24 | Nuri Enes Seyhan (DQ) | Sayısal alanlar tam sayı ve tüm sınır/ilişki kuralları geçerli olmalı. | 260 kayıttaki gösterim, tıklama ve dönüşüm kontrolleri geçti. | Geçti |
+| TC-07 | Tutar biçimi ve tutarlılığı | 2026-10-24 | Nuri Enes Seyhan (DQ) | Tutarlar iki ondalıklı olmalı; alt sınırlar ve sıfır dönüşüm kuralı geçerli olmalı. | Tüm tutarlar ve dönüşüm-gelir ilişkisi doğrulandı. | Geçti |
+| TC-08 | İzinli kanal ve dağılım | 2026-10-24 | Nuri Enes Seyhan (DQ) | Beş izinli kanalın her birinde 52 kayıt olmalı. | Google Ads, Meta Ads, TikTok Ads, E-posta ve SEO için 52'şer kayıt bulundu. | Geçti |
+| TC-09 | Hafta-kanal çiftlerinin benzersizliği | 2026-10-24 | Nuri Enes Seyhan (DQ) | 260 hafta-kanal kombinasyonunun her biri bir kez bulunmalı. | 260 benzersiz kombinasyon bulundu; eksik veya yinelenen çift yok. | Geçti |
+| TC-10 | Boş hücreler | 2026-10-24 | Nuri Enes Seyhan (DQ) | Veri hücreleri boş olmamalı. | Boş hücre bulunmadı. | Geçti |
+| TC-11 | Tekrarlanabilirlik | 2026-10-24 | Nuri Enes Seyhan (DQ) | İki üretim aynı olmalı ve mevcut CSV ile bayt düzeyinde eşleşmeli. | İki üretici çıktısı aynı ve mevcut CSV ile eşit bulundu. | Geçti |
+| TC-12 | UTF-8, BOM ve satır sonu biçimi | 2026-10-24 | Nuri Enes Seyhan (DQ) | UTF-8, BOM'suz ve LF satır sonlu CSV olmalı. | UTF-8, BOM'suz LF biçimi doğrulandı. | Geçti |
+
 ## Hafta 3'ten Aktarılan Test Sonuçları
 
 Hafta 3'te `tests/test-cases.md` içinde tutulan sonuçlar, önceki test tarihleri korunarak bu günlüğe taşınmıştır.
