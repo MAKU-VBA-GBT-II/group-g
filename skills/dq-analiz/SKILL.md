@@ -1,6 +1,6 @@
 ---
 name: dq-analiz
-description: "Use when calculating and documenting G1 campaign performance metrics from the verified campaign CSV, including totals, averages, channel breakdowns, ROAS ranking, observations, and handoff."
+description: "Doğrulanmış G1 kampanya CSV dosyasından toplam, ortalama ve kanal metriklerini hesaplayıp analiz raporunu ve haftalık gelir trendini hazırlarken kullan."
 ---
 
 # DQ Analiz Skill'i
@@ -29,6 +29,8 @@ Doğrulanmış `data/kampanya-performans.csv` ve `docs/veri-sozlugu-g1.md` temel
 6. Sonuçları `docs/analiz-g1.md` içine yaz. Her metriğe 1–2 cümlelik yorum, sayılara dayalı 3 somut gözlem ve tek, uygulanabilir bir eylem önerisi ekle. Verinin sentetik olduğunu ve gözlemsel sonuçların tek başına nedensellik göstermediğini belirt.
 7. Sayıları veri üzerinde tekrar hesaplayarak doğrula; metrik kategorilerinin toplamlarıyla genel toplamların tutarlılığını ve top-3 sırasını kontrol et.
 8. Skill'i, envanter satırını ve analiz raporunu commit edip depoya gönder. Commit hash'ini `G1-Analiz` Issue'suna kanıt olarak yaz. `G1-Görsel` Issue'suna şu biçimde devir teslim yorumu ekle: `Analiz hazır — commit <hash>. Dosya: docs/analiz-g1.md. Metrikler: <kısa liste>.`
+9. Başka bir rolün sahibi olduğu dosyada hata görürsen o dosyayı değiştirme. Kanıt ve yeniden üretme adımlarıyla `bug` etiketli bir Issue açıp dosyanın sahibine ata.
+10. Analizi aynı veriyle yeniden üretmek veya veri güncellendiğinde yenilemek için depo kökünde `python src/analiz_g1.py` komutunu çalıştır. Betik CSV şema kontrollerinden geçmezse hata verip raporu güncellemez.
 
 ## Kullanılan dosyalar
 
@@ -38,6 +40,7 @@ Doğrulanmış `data/kampanya-performans.csv` ve `docs/veri-sozlugu-g1.md` temel
 | `docs/veri-sozlugu-g1.md` | Güncel veri şeması, kapsam ve kurallar |
 | `data/kampanya-performans.csv` | Analiz girdisi |
 | `docs/analiz-g1.md` | Metrik, yorum, gözlem ve eylem raporu |
+| `src/analiz_g1.py` | CSV'yi doğrulayan ve analiz raporunu yeniden üreten betik |
 | `skills/dq-analiz/SKILL.md` | Bu iş akışı |
 
 ## Nasıl çalıştırılır?
@@ -46,4 +49,4 @@ VS Code ajanına şu isteği ver:
 
 > `dq-analiz` skill'ini kullan. Önce G1-Analiz Issue'sunda BE'nin güncel teslim yorumunu doğrula; ardından CSV'den metrikleri hesapla ve `docs/analiz-g1.md` dosyasını hazırla.
 
-Metrik hesabında Python standart kütüphanesindeki `csv`, `decimal.Decimal` ve `collections.defaultdict` kullanılabilir. Hesabı veri teslimi doğrulandıktan sonra depo kökünde çalıştır.
+Analizi yeniden üretmek için depo kökünden `python src/analiz_g1.py` çalıştır. Betik yalnızca Python standart kütüphanesini kullanır; veri teslimini doğrular, metrikleri `Decimal` ile hesaplar ve haftalık toplam gelir tablosunu da içeren `docs/analiz-g1.md` dosyasını yazar.
