@@ -1,6 +1,6 @@
 ---
 name: junior-kontrol
-description: "Use when a VS Code AI agent checks the G1 campaign-performance CSV with PowerShell after the BE handoff, reports data-quality findings, or updates selected test scenarios."
+description: "BE tesliminden sonra VS Code yapay zekâ ajanının PowerShell ile G1 kampanya performansı CSV'sini kontrol etme, veri kalitesi bulgularını raporlama veya seçilen test senaryolarını güncelleme görevlerinde kullan."
 ---
 
 # Junior Veri Kontrolü (G1)
