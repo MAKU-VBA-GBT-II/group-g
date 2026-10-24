@@ -17,8 +17,8 @@ channel_col = "kanal"
 # Alt başlık için dinamik hesapla
 n_kanal = df[channel_col].nunique()
 n_hafta = df[week_col].nunique()
-tarih_baslangic = pd.to_datetime(df[week_col]).min().strftime("%-d %B %Y")
-tarih_bitis = pd.to_datetime(df[week_col]).max().strftime("%-d %B %Y")
+tarih_baslangic = pd.to_datetime(df[week_col]).min().strftime("%d %B %Y").lstrip("0")
+tarih_bitis = pd.to_datetime(df[week_col]).max().strftime("%d %B %Y").lstrip("0")
 alt_baslik = f"{n_kanal} kanal · {n_hafta} hafta · {tarih_baslangic} – {tarih_bitis}"
 
 # ---------------------------------------------------------
