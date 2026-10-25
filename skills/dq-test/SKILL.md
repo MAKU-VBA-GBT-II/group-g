@@ -1,43 +1,35 @@
 ---
 name: dq-test
-description: "G1 kampanya verisi için test senaryolarını hazırlamak, src/dq_test.py ile veri sözlüğü kontrollerini çalıştırmak ve sonuçları tests/test-log.md'ye kaydetmek gerektiğinde kullan."
+description: "G1 kampanya performansı verileri için güncel veri sözlüğüne göre dosya, kayıt sayısı, şema, veri türü, değer aralığı ve kategori kontrollerini içeren kalite test senaryoları hazırlarken veya güncellerken kullan."
 ---
 
 # Veri Kalitesi Test Senaryoları
 
 ## Ne yapar?
 
-`docs/veri-sozlugu-g1.md` şemasını ve `data/kampanya-performans.csv` veri kümesini esas alarak `tests/test-cases.md` içinde veri kalitesi senaryoları hazırlar; `src/dq_test.py` ile bunları çalıştırır ve tarihli sonuçları `tests/test-log.md` içine kaydeder.
+`docs/veri-sozlugu-g1.md` şemasını ve `data/kampanya-performans.csv` veri kümesini esas alarak `tests/test-cases.md` içinde veri kalitesi senaryoları hazırlar. Test senaryoları; dosyanın varlığını, kayıt sayısını, sütun adlarını, tip ve aralık kurallarını, kategori değerlerini kapsar.
 
 ## Adımlar
 
 1. Depo kökündeki `AGENTS.md` yönergelerini ve `docs/veri-sozlugu-g1.md` şemasını oku.
-2. Beklenen boyutu, sütunları, kategorileri ve veri kurallarını veri sözlüğünden al; değerleri skill veya test senaryolarına sabitleme. `src/kampanya_simulasyon.py` sabitleriyle sözlük arasında çelişki varsa testleri çalıştırmadan önce bunu raporla.
-3. `tests/test-cases.md` içinde `ID`, `Senaryo`, `Adımlar` ve `Beklenen sonuç` sütunlarıyla her kuralı ayrı ve tekrarlanabilir biçimde tanımla. Sabit kimlikler kullan: `TC-01`, `TC-02`…; en az dosya erişimi, tam kayıt sayısı, başlık, kimlik, tarih, sayısal tür/aralık/ilişki, tutar biçimi, izinli kategoriler ve kategori başına sayıyı kapsa.
-4. Ek senaryolarla (tarih, kanal) benzersizliğini ve tam hafta-kanal kapsamını, boş hücreleri, UTF-8/BOM/virgül/LF biçimini ve sabit tohumla tekrar üretilebilirliği kontrol et. Her hafta-kanal çifti tam bir kez bulunmalıdır.
-5. Testleri depo kökünden `python src/dq_test.py` komutuyla çalıştır. Betik her TC için `GEÇTİ` veya `KALDI` çıktısı verir ve bir test kaldığında sıfır olmayan kodla çıkar. Test üretici betiğini çalıştırıp CSV üzerine yazmaz; tekrarlanabilirliği bellekte oluşturulan iki çıktıyı ve mevcut CSV'yi karşılaştırarak kontrol eder.
-6. Komutun gerçek çıktısını, test tarihini, test eden kişiyi/rolü, kullanılan araç ve Python sürümünü, test edilen veri commit'ini ve her senaryonun beklenen/gerçekleşen sonucunu `tests/test-log.md` dosyasına kaydet. Durum alanında yalnızca `Geçti`, `Kaldı` veya `Beklemede` kullan; yürütülmemiş test için sonuç uydurma.
-7. Bir veya daha fazla senaryo `Kaldı` ise yeniden üretme adımlarını, beklenen ve gözlenen davranışı içeren `bug` etiketli Issue aç. Veri/üretim hatasını BE sahibine ata; test/grafik hatasını ilgili sahibine yönlendir. Başarısız testleri düzeltme veya başkasının dosyasını doğrudan değiştirme; önce Issue açıp sahibine ata.
-8. İlgili Hafta 4 test Issue'suna test günlüğü ve commit hash'ini içeren kanıt yorumu bırak. Günlüğe Issue bağlantılarını ekle; sorun yoksa en az iki somut `enhancement` önerisi aç. `AGENTS.md` içindeki sahiplik ve kanıt kurallarına uy.
-9. `tests/test-cases.md` dosyası yalnızca test tanımlarının kaynağıdır; gerçekleşen sonuçların tek yetkili kaynağı tarihli `tests/test-log.md` günlüğüdür. Mevcut sonuçları yeniden çalıştırmadan silme veya değiştirme.
+2. Veri dosyasının yolu, beklenen 8 sütun, hedef satır sayısı, tarih aralığı ve diğer kuralları güncel veri sözlüğünden belirle. Sayıları (ör. 130 veya 260) sabit kodlama. Kanal kategorilerini sözlükteki sabit değerlerden al. `src/kampanya_simulasyon.py` doğrulamalarını ince ve sözlük ile tutarlılığını karşılaştır.
+3. `tests/test-cases.md` dosyasını altı zorunlu sütunlu bir Markdown tablosu olarak hazırla: `No`, `Senaryo`, `Adımlar`, `Beklenen sonuç`, `Gerçekleşen sonuç`, `Durum`.
+4. En az şu kontroller için ayrı ve tekrarlanabilir senaryolar yaz: CSV'nin bulunması; başlık hariç en az 100 satır (hedef güncel sözlükten alınır); doğru 8 sütun; veri tipleri ve `tiklama <= gosterim`, `donusum <= tiklama`, `harcama_tl > 0`, `gelir_tl >= 0` dahil şema aralıkları; yalnızca izin verilen 5 kanalın kullanılması ve en az 4 farklı kanal bulunması.
+5. Şema gerektiriyorsa ek kuralları da dikkate al: kampanya kimliği biçimi ve benzersizliği; tarih biçimi, aralığı ve haftanın günü; gösterim aralığı 5.000–250.000; tıklama en az 1; dönüşüm en az 0; tutarların pozitif/sıfır alt sınırları ve CSV'de tam iki ondalık basamakla yazılması; kategori başına kayıt sayısı. Beklenen sonuçları güncel veri sözlüğüne göre yaz; sözlük, veri ve üretici betiği arasında çelişki bulursan bunu açıkça belirt.
+6. Senaryoların adımlarını ve beklenen sonuçlarını yaz; dosyaları gerçekten çalıştırıp doğrulamadan `Gerçekleşen sonuç` hücrelerini doldurma. Yürütme henüz yapılmadıysa `Durum` değerini beklemede olarak belirt.
+7. Tablonun Markdown biçimini, en az beş senaryo içerdiğini ve bütün zorunlu sütunların bulunduğunu kontrol et. `AGENTS.md` skill envanterinde `dq-test` satırının doğru yol, sahip ve kullanım bilgisiyle yer aldığını doğrula.
 
 ## Kullanılan dosyalar
 
 - `AGENTS.md` — depo kuralları ve skill envanteri
 - `docs/veri-sozlugu-g1.md` — veri şeması ve doğrulama kuralları
 - `data/kampanya-performans.csv` — test edilecek CSV
-- `src/dq_test.py` — veri kalitesi senaryolarını çalıştıran betik
-- `tests/test-cases.md` — test tanımları
-- `tests/test-log.md` — tarihli test sonuçları
+- `tests/test-cases.md` — oluşturulacak test senaryoları
 
 ## Nasıl çalıştırılır?
 
-Depo kökünde şu komutu çalıştır:
+VS Code ajanına şu isteği ver:
 
-```console
-python src/dq_test.py
-```
+> `dq-test` skill'ini kullanarak `docs/veri-sozlugu-g1.md` şemasına göre `tests/test-cases.md` dosyasını hazırla veya güncelle.
 
-Yeni senaryoları hazırlama/güncelleme isteği:
-
-> `dq-test` skill'ini kullanarak veri sözlüğüyle tutarlı test tanımlarını `tests/test-cases.md` içine ekle.
+Bu skill test senaryoları dokümantasyonunu üretir; testlerin fiilen yürütülmesini veya sonuç uydurulmasını istemez. Testleri çalıştırırken veri dosyasını depo kökündeki Python veya CSV araçlarıyla incele ve gerçek sonuçları ancak yürütme sonrasında kaydet.
