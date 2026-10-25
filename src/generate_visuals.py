@@ -1,12 +1,15 @@
-import os
+from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# visuals klasörünü oluştur
-os.makedirs("visuals", exist_ok=True)
+# Proje kök dizini ve yol tanımları
+ROOT = Path(__file__).resolve().parent.parent
+DATA_PATH = ROOT / "data" / "kampanya-performans.csv"
+VISUALS_DIR = ROOT / "visuals"
+VISUALS_DIR.mkdir(parents=True, exist_ok=True)
 
 # Veri setini oku (sütun adları veri sözlüğünden: tarih, kanal, harcama_tl, gelir_tl)
-df = pd.read_csv("data/kampanya-performans.csv")
+df = pd.read_csv(DATA_PATH)
 
 # Sütun adları doğrudan — veri sözlüğüne göre sabit
 week_col = "tarih"
@@ -60,7 +63,7 @@ plt.xlabel("Hafta / Dönem", fontsize=11, labelpad=10)
 plt.ylabel("Toplam Gelir (TL)", fontsize=11)
 plt.grid(True, linestyle="--", alpha=0.5)
 plt.tight_layout()
-plt.savefig("visuals/gelir-zaman-serisi.png", dpi=300)
+plt.savefig(VISUALS_DIR / "gelir-zaman-serisi.png", dpi=300)
 plt.close()
 
 # ---------------------------------------------------------
@@ -109,7 +112,7 @@ for bar in bars:
 ax.set_ylim(0, max_y * 1.18)
 plt.grid(axis="y", linestyle="--", alpha=0.5)
 plt.tight_layout()
-plt.savefig("visuals/kanal-kirilim.png", dpi=300)
+plt.savefig(VISUALS_DIR / "kanal-kirilim.png", dpi=300)
 plt.close()
 
 print("Grafikler analiz dokümanındaki birleşik ROAS hesabı ile güncellendi!")
