@@ -39,5 +39,5 @@ Hafta 3'te `tests/test-cases.md` içinde tutulan sonuçlar, önceki test tarihle
 ## Tespit Edilen Hatalar ve Açılan Kayıtlar
 *(DQ ve Junior üyeler tarafından `bug` / `enhancement` etiketiyle açılan Issue'lar buraya listelenir)*
 
-- **İyileştirme 1:** [#37](https://github.com/MAKU-VBA-GBT-II/group-g/issues/37) — `DQ önerisi: Haftalık kanal kapsamını ayrı senaryoyla doğrula` (`enhancement`, Nuri Enes Seyhan, commit `4b84ad0` ile çözüldü)
-- **İyileştirme 2:** [#38](https://github.com/MAKU-VBA-GBT-II/group-g/issues/38) — `DQ önerisi: Şema doğrulama kontrollerini ayrıştır` (`enhancement`, Nuri Enes Seyhan, commit `4b84ad0` ile çözüldü)
+- **Hata 1:** *(Henüz açılmadı)*
+- **Hata 2:** *(Henüz açılmadı)*
