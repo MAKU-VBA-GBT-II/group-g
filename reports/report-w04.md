@@ -62,7 +62,7 @@ Ek PM görevleri: Pano ve Issue hijyeni denetimi, `reports/report-w04.md` hazır
 
 1. **Açık Kalan İyileştirme Issue'ları (#37 ve #38):** DQ tarafından çözülüp açık bırakılan kartlar, PM denetiminde doğrulanıp kapatıldı.
 2. **Yan Görev Teslim Kartları (#36 ve #39):** Depoda dosyaları olmasına rağmen açık unutulan bildirim kartları PM tarafından kapatıldı.
-3. **`tests/test-log.md` Eşleşmesi:** Test günlüğünde yer tutucu olarak kalan hata kayıtları bölümü, #37 ve #38 referansları eklenerek commit `2bfc4b6` ile güncellendi.
+3. **`tests/test-log.md` Notu:** DQ tarafından açılan #37 ve #38 iyileştirme önerileri uygulanmış olup, test günlüğünün ilgili tablosuna işlenmesi rol sınırları gereği DQ yetkisinde bırakılmıştır.
 4. **`gorev1-final` Release Süreci:** Görev 1 final mühürlemesi sprint bitişiyle birlikte `gorev1-final` tag ve release'i oluşturularak tamamlanacaktır.
 
 ---
