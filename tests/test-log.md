@@ -24,6 +24,19 @@ Görev 2 mini ürününün `main` dalındaki tüm bileşenleri (`data/kampanya-s
 
 ---
 
+## Junior Ön İnceleme — 2026-11-03 (Görev 2)
+
+| Kontrol | Girdi | Gerçekleşen Sonuç | Durum / Not |
+|---|---|---|---|
+| Teslim edilen CSV | `data/kampanya-simulasyon-g2.csv` | 260 veri satırı, sözlükle aynı 8 sütun; 5 kanalın her birinde 52 satır. Çalışma dosyasının git'teki içerikle aynı olduğu doğrulandı. | **Geçti** |
+| Varsayılan simülasyon | `tohum=42`, `hafta_sayisi=52`, `kampanya_sayisi=5`, `baslangic_tarihi=2025-10-06` | Geçici çıktı dosyasında 260 satır üretildi ve betik içi doğrulamadan geçti. | **Geçti** |
+| Alternatif parametreler | `tohum=7`, `hafta_sayisi=10`, `kampanya_sayisi=3`, `baslangic_tarihi=2026-11-02` | Geçici çıktı dosyasında 30 satır üretildi; başlangıç tarihi Pazartesi olarak kabul edildi. Üç kampanya sayısı ilk üç sabit kanalı üretti. | **Geçti; kanal seçimi kısıtı [#53](https://github.com/MAKU-VBA-GBT-II/group-g/issues/53) kapsamında açık.** |
+| Tekrarlanabilirlik | Aynı alternatif parametrelerle iki üretim; ardından `tohum=123` | Aynı tohumlu dosyaların SHA-256 değerleri eşleşti; farklı tohumlu dosyanın hash'i farklı çıktı. | **Geçti** |
+
+Deneme çıktıları sistem geçici dizininde tutuldu; depo içindeki varsayılan G2 CSV'sine yazılmadı.
+
+---
+
 ## Hafta 6 Test Turunda Tespit Edilen Hatalar ve Açılan Issue'lar
 
 Hafta 6 kapsamlı sistem testi sırasında tespit edilen işlevsel kısıt ve hata kayıtları:

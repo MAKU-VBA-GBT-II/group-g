@@ -1,50 +1,59 @@
 ---
 name: junior-kontrol
-description: "BE tesliminden sonra VS Code yapay zekâ ajanının PowerShell ile G1 kampanya performansı CSV'sini kontrol etme, veri kalitesi bulgularını raporlama veya seçilen test senaryolarını güncelleme görevlerinde kullan."
+description: "Görev 2'de G2 veri sözlüğünü, kampanya simülasyonunu ve parametre davranışını ön inceleyen Junior kontrol skill'i."
 ---
 
-# Junior Veri Kontrolü (G1)
+# Junior Ön İnceleme (G2)
 
 ## Ne yapar?
 
-BE'nin teslim ettiği kampanya performansı CSV'sini veri sözlüğüyle karşılaştırır; kayıt sayısını, şemayı, kanal kategorilerini, tıklama/dönüşüm kurallarını ve boş hücreleri kontrol eder. Sonuçları G1-Junior Görev Issue'sunda raporlar ve DQ ile seçilen iki senaryonun gerçekleşen sonuçlarını `tests/test-cases.md` içinde günceller.
+G2 veri sözlüğünü ve BE'nin simülasyon betiğini inceler; teslim edilen CSV'yi ve farklı simülasyon parametrelerini doğrular. Sonuçları `tests/test-log.md` içinde tarihli olarak kaydeder ve bulguları G2 Junior Issue'suna kanıtla bildirir.
 
 ## Ne zaman kullanılır?
 
-- G1 kampanya CSV'si için junior veri kalitesi kontrolü yaparken
-- BE'nin yeni bir veri teslimini inceleyip Issue'da kanıt raporu hazırlarken
+- G2 veri sözlüğü ve simülasyon betiği için ön inceleme yaparken
+- Teslim edilen G2 verisini veya farklı parametrelerle üretilen çıktıları doğrularken
 
 ## Kullanılan dosyalar ve kaynaklar
 
 | Kaynak | Rol |
 |---|---|
-| `AGENTS.md` | Depo kuralları ve skill envanteri |
-| `docs/veri-sozlugu-g1.md` | Beklenen şema, kategori değerleri ve veri kuralları |
-| `data/kampanya-performans.csv` | VS Code yapay zekâ ajanının PowerShell `Import-Csv` ile okuyup denetleyeceği veri |
-| `tests/test-cases.md` | Satır sayısı ve kanal kategorileri senaryolarının kaydı |
-| G1-Analiz Issue'su (#11) | BE teslim yorumunu bekleme ve bulguları bildirme |
-| G1-Junior Görev Issue'su (#14) | Kontrol tamamlanma ve commit kanıtı |
+| `AGENTS.md` | Görev 2 rol dağılımı ve depo kuralları |
+| `docs/veri-sozlugu.md` | Beklenen alanlar, tipler, sınırlar ve simülasyon parametreleri |
+| `src/simulasyon.py` | Parametreli veri üreticisi |
+| `data/kampanya-simulasyon-g2.csv` | BE'nin teslim ettiği varsayılan veri |
+| `tests/test-cases.md` | DQ kabul senaryoları |
+| `tests/test-log.md` | Tarihli, fiilen çalıştırılmış test sonuçları |
+| Issue [#41](https://github.com/MAKU-VBA-GBT-II/group-g/issues/41) | BE teslimi ve devir bilgisi |
+| Issue [#45](https://github.com/MAKU-VBA-GBT-II/group-g/issues/45) | Junior bulguları ve tamamlanma kanıtı |
 
 ## Adım adım talimat
 
-1. Depo kökündeki `AGENTS.md` ve `docs/veri-sozlugu-g1.md` dosyalarını oku. Skill örneği gerekiyorsa depoda mevcut bir `SKILL.md` dosyasını kullan; envanterde listelenen bir dosyanın bulunmadığını varsayma.
-2. **Veri dosyasını açmadan önce** G1-Analiz Issue'sunda BE'nin güncel `Veri hazır — commit <hash>` teslim yorumunu bekle. Yorumdaki commit ve satır sayısının güncel teslimi belirlediğini doğrula. Teslim yoksa veriye bakma; önce G1-Junior Görev Issue'suna engeli ve teslim talebini yaz.
-3. Teslim onaylandıktan sonra VS Code yapay zekâ ajanı olarak depo kökünde PowerShell `Import-Csv` komutunu çalıştırıp CSV'yi incele: `$rows = @(Import-Csv .\data\kampanya-performans.csv)`. Bu iş akışında kontrolü yöneten ve sonuçları raporlayan araç yapay zekâ ajanı; CSV'yi okumak ve kayıtları süzmek için kullanılan araç PowerShell'dir. Excel kullanılmadı. `$rows.Count` başlık hariç kayıt sayısını verir. Geçerli hedefi veri sözlüğünün güncel sürümünden al; eski görev metnindeki satır sayısı güncel sözlükle çelişiyorsa ikisini de not et ve sözlüğü esas al.
-4. CSV başlığındaki sütun adlarını ve sırasını veri sözlüğündeki şemayla karşılaştır. `$rows | Group-Object kanal` komutuyla farklı kanal değerlerini ve kayıt sayılarını çıkar; sonuçları kaydet.
-5. Sayısal alanların geçerli olduğu doğrulandıktan sonra her kayıt için `tiklama > gosterim` ve `donusum > tiklama` ihlallerini PowerShell ile bul:
-   - `$clickViolations = @($rows | Where-Object { [int]$_.tiklama -gt [int]$_.gosterim })`
-   - `$conversionViolations = @($rows | Where-Object { [int]$_.donusum -gt [int]$_.tiklama })`
+1. `AGENTS.md`, `docs/veri-sozlugu.md` ve `tests/test-cases.md` dosyalarını oku. G2 dosya adlarını kullan; G1 dosyalarını bu görev için veri veya şema kabul etme.
+2. `data/kampanya-simulasyon-g2.csv` dosyasını incelemeden önce Issue #41'de BE teslimini ve PR #49'daki DQ onayını doğrula. Teslim/inceleme tamamlanmamışsa veriyi test etme; engeli Issue #45'e yaz.
+3. Mevcut veriyi PowerShell `Import-Csv` ile oku. Başlık sırası ve satır sayısını sözlükle karşılaştır; kanal dağılımı, eksik hücreler, benzersiz kimlikler, tarihler ve temel aralıkları kontrol et.
+4. Üretim denemelerinde her zaman `--cikti` vererek çıktıyı geçici bir dizine yönlendir. Betiğin varsayılan hedefi depo içindeki G2 CSV'dir; bu dosyanın üzerine yazma.
+5. Varsayılan parametrelerle 260 satırın üretildiğini doğrula. Ayrıca farklı bir Pazartesi başlangıcı, tohum, hafta sayısı ve kampanya sayısı kullan; satır sayısının `hafta_sayisi * kampanya_sayisi` ile eşleştiğini kontrol et.
+6. Aynı parametrelerle iki ayrı çıktı üretip SHA-256 değerlerini karşılaştır. Aynı tohum aynı çıktıyı, farklı tohum ise farklı çıktıyı vermelidir.
+7. `kampanya_sayisi` 5'ten küçükken betiğin ilk N sabit kanalı seçtiğini gözlemlersen bunu yeni bir hata olarak çoğaltma: açık Issue #53'ü kontrol et ve bulgunda bu Issue'ya bağla.
+8. Yalnızca fiilen çalıştırılan kontrolleri `tests/test-log.md` dosyasına tarih, girdi, sonuç ve durumla kaydet. Beklenen veya yürütülmemiş kontrolleri geçmiş gibi göstermeden bırak.
+9. Issue #45'e test özetini ve varsa ilgili Issue bağlantısını yaz. Commit alındıktan sonra commit hash'ini, değişen dosyaları ve prompt özetini ekle. Değişiklikleri ayrı dalda PR olarak sun; DQ onayı olmadan birleştirme.
 
-   Her iki filtre de tüm `$rows` kayıtlarına uygulanır. Her liste için `.Count` değerini ve `ForEach-Object kampanya_id` ile etkilenen kayıt kimliklerini bulgu raporuna yaz. İhlal yoksa ilgili kontrol için `0 ihlal` ve `Etkilenen kampanya: yok` olarak kaydet.
-6. Tüm veri hücrelerinde boş veya yalnızca boşluk içeren değer olup olmadığını kontrol et. Her kontrolün sonucunu ve varsa etkilenen kayıt/sütunları not et.
-7. İstenen iki senaryoyu DQ ile belirle. Varsayılan kısa kapsam, **Satır sayısı** ve **Kanal kategori değerleri** senaryolarıdır. `tests/test-cases.md` içinde yalnızca bu senaryoların beklenen/gerçekleşen sonuçlarını güncelle; gerçekleşen sonucu kontrolü gerçekten yaptıktan sonra yaz.
-8. G1-Junior Görev Issue'suna bulguları madde madde yaz. Sorun yoksa açıkça `sorun bulunmadı` de. Commit alındıktan sonra aynı Issue'ya `Veri kontrolü tamam — commit <hash>. Bulgular: <kısa özet>.` biçiminde kanıt bırak.
-9. Değişiklikleri ayrı bir dalda commit edip PR aç. `main` dalına alınmadan önce DQ'nun **Approve** incelemesini bekle; onay gelmeden PR'ı birleştirme.
+## Kullanım örneği
 
-## Nasıl çalıştırılır?
+Depo kökünden PowerShell'de örnek parametre testi:
 
-Bu skill, otomatik analiz betiği değil; VS Code ajanına verilecek iş akışıdır. Depo kökünde ajana şu isteği ver:
+```powershell
+$out = Join-Path $env:TEMP 'group-g-g2-junior-check.csv'
+python .\src\simulasyon.py --tohum 7 --hafta_sayisi 10 --kampanya_sayisi 3 --baslangic_tarihi 2026-11-02 --cikti $out
+$rows = @(Import-Csv -LiteralPath $out)
+$rows.Count
+```
 
-> VS Code yapay zekâ ajanı olarak `junior-kontrol` skill'ini kullan; BE teslimini bekle, G1 kampanya verisini PowerShell Import-Csv ile denetle, DQ ile seçilen iki senaryoyu tests/test-cases.md içinde güncelle ve bulguları G1-Junior Görev Issue'suna yaz. Değişiklikleri PR olarak sun ve DQ Approve vermeden birleştirme.
+Kontrolü başlatma isteği:
 
-Bu iş akışında VS Code yapay zekâ ajanı incelemeyi yönlendirir, PowerShell `Import-Csv` CSV'yi okuma ve kayıtları süzme aracıdır; Excel kullanılmaz. Veriyi okumadan önce Issue #11'de güncel BE teslimi bulunduğunu doğrula.
+> `junior-kontrol` skill'ini kullanarak G2 sözlüğünü ve BE teslimini doğrula; G2 CSV'sini koruyarak simülasyonu farklı başlangıç tarihi, tohum, hafta ve kampanya sayısıyla geçici dosyalarda çalıştır. Sonuçları tarihli test günlüğüne ve Issue #45'e yaz; mevcut kanal seçimi kısıtını Issue #53 ile ilişkilendir.
+
+Issue yorumunda kullanılan prompt biçimi:
+
+> Üretim/Kontrol: junior-kontrol skill'i ile, PowerShell + Python — prompt özeti: G2 şema ve parametreli simülasyon ön incelemesi; mevcut CSV korundu, alternatif parametreler geçici çıktılarda doğrulandı.
