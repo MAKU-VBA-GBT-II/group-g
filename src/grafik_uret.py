@@ -7,7 +7,15 @@
 
 Çalıştırma (deponun kök klasöründe):
     python src/grafik_uret.py
+    python src/grafik_uret.py --veri data/senaryo_10_hafta.csv
+    python src/grafik_uret.py --veri data/senaryo_10_hafta.csv --cikti_dizini visuals/senaryo
+
+Argümanlar (hepsi isteğe bağlı):
+    --veri          Okunacak CSV dosyası (varsayılan: G2 verisi, yoksa G1 verisi)
+    --cikti_dizini  PNG'lerin yazılacağı klasör (varsayılan: visuals/)
 """
+import argparse
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -18,15 +26,12 @@ import pandas as pd
 from matplotlib.ticker import FuncFormatter
 
 KOK = Path(__file__).resolve().parent.parent
-VISUALS = KOK / "visuals"
-VISUALS.mkdir(parents=True, exist_ok=True)
+VISUALS = KOK / "visuals"  # varsayılan çıktı klasörü
 
-# Görev 2 verisi hazır olunca otomatik onu kullanır; yoksa G1 verisiyle iskeleti çalıştırır.
+# Görev 2 verisi varsa varsayılan olarak onu kullanır; yoksa G1 verisiyle çalışır.
 VERI_G2 = KOK / "data" / "kampanya-simulasyon-g2.csv"
 VERI_G1 = KOK / "data" / "kampanya-performans.csv"
-VERI_YOLU = VERI_G2 if VERI_G2.exists() else VERI_G1
-if VERI_YOLU == VERI_G1:
-    print("UYARI: G2 verisi yok, iskelet G1 verisiyle çalışıyor. Son hâl için G2 verisi gerekli.")
+GEREKLI_SUTUNLAR = ["tarih", "kanal", "gosterim", "tiklama", "gelir_tl", "harcama_tl"]
 
 MAVI, TURUNCU, YESIL = "#2b6cb0", "#d9622b", "#2f855a"
 DPI = 200
@@ -42,7 +47,7 @@ def alt_baslik(df):
             f"{df['tarih'].min()} – {df['tarih'].max()}")
 
 
-def trend_grafigi(df):
+def trend_grafigi(df, cikti):
     """1) Haftalık gelir ve harcama trendi (zaman serisi)."""
     haftalik = df.groupby("tarih", as_index=False)[["gelir_tl", "harcama_tl"]].sum()
     fig, ax = plt.subplots(figsize=(11, 5.5))
@@ -59,11 +64,11 @@ def trend_grafigi(df):
     ax.grid(True, linestyle="--", alpha=0.5)
     ax.legend()
     fig.tight_layout()
-    fig.savefig(VISUALS / "gelir-harcama-trendi.png", dpi=DPI)
+    fig.savefig(cikti / "gelir-harcama-trendi.png", dpi=DPI)
     plt.close(fig)
 
 
-def kanal_grafigi(df):
+def kanal_grafigi(df, cikti):
     """2) Kanal bazlı birleşik ROAS ve CTR (kategorik kırılım)."""
     k = df.groupby("kanal", as_index=False)[["gelir_tl", "harcama_tl", "tiklama", "gosterim"]].sum()
     k["roas"] = k["gelir_tl"] / k["harcama_tl"]
@@ -87,11 +92,11 @@ def kanal_grafigi(df):
     fig.suptitle("Kanal Bazlı ROAS ve CTR Karşılaştırması", fontsize=14, fontweight="bold")
     fig.text(0.5, 0.925, alt_baslik(df), ha="center", fontsize=9.5, color="gray")
     fig.tight_layout(rect=[0, 0, 1, 0.92])
-    fig.savefig(VISUALS / "kanal-roas-ctr.png", dpi=DPI)
+    fig.savefig(cikti / "kanal-roas-ctr.png", dpi=DPI)
     plt.close(fig)
 
 
-def roas_dagilimi(df):
+def roas_dagilimi(df, cikti):
     """3) Kampanya-hafta ROAS dağılımı (histogram)."""
     roas = df["gelir_tl"] / df["harcama_tl"]
     fig, ax = plt.subplots(figsize=(10, 5.5))
@@ -108,16 +113,38 @@ def roas_dagilimi(df):
     ax.grid(axis="y", linestyle="--", alpha=0.5)
     ax.legend()
     fig.tight_layout()
-    fig.savefig(VISUALS / "roas-dagilimi.png", dpi=DPI)
+    fig.savefig(cikti / "roas-dagilimi.png", dpi=DPI)
     plt.close(fig)
 
 
+def argumanlari_oku():
+    ap = argparse.ArgumentParser(description="Kampanya verisinden 3 grafik üretir (trend, kanal ROAS/CTR, ROAS dağılımı).")
+    ap.add_argument("--veri", type=Path, default=None,
+                    help="Okunacak CSV dosyası (varsayılan: data/kampanya-simulasyon-g2.csv, yoksa G1 verisi)")
+    ap.add_argument("--cikti_dizini", type=Path, default=VISUALS,
+                    help="PNG'lerin yazılacağı klasör (varsayılan: visuals/)")
+    return ap.parse_args()
+
+
 def main():
-    df = pd.read_csv(VERI_YOLU)
-    trend_grafigi(df)
-    kanal_grafigi(df)
-    roas_dagilimi(df)
-    print(f"3 grafik üretildi ({len(df)} satır, kaynak: {VERI_YOLU.name}) -> {VISUALS}")
+    args = argumanlari_oku()
+    veri_yolu = args.veri
+    if veri_yolu is None:
+        veri_yolu = VERI_G2 if VERI_G2.exists() else VERI_G1
+        if veri_yolu == VERI_G1:
+            print("UYARI: G2 verisi yok, G1 verisi kullanılıyor.")
+    if not veri_yolu.exists():
+        sys.exit(f"HATA: veri dosyası bulunamadı: {veri_yolu}")
+    df = pd.read_csv(veri_yolu)
+    eksik = [c for c in GEREKLI_SUTUNLAR if c not in df.columns]
+    if eksik:
+        sys.exit(f"HATA: veri dosyasında eksik sütun(lar): {', '.join(eksik)}")
+    cikti = args.cikti_dizini
+    cikti.mkdir(parents=True, exist_ok=True)
+    trend_grafigi(df, cikti)
+    kanal_grafigi(df, cikti)
+    roas_dagilimi(df, cikti)
+    print(f"3 grafik üretildi ({len(df)} satır, kaynak: {veri_yolu.name}) -> {cikti.resolve()}")
 
 
 if __name__ == "__main__":
