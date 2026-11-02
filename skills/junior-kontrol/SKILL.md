@@ -34,7 +34,7 @@ G2 veri sözlüğünü ve BE'nin simülasyon betiğini inceler; teslim edilen CS
 3. Mevcut veriyi PowerShell `Import-Csv` ile oku. Başlık sırası ve satır sayısını sözlükle karşılaştır; kanal dağılımı, eksik hücreler, benzersiz kimlikler, tarihler ve temel aralıkları kontrol et.
 4. Üretim denemelerinde her zaman `--cikti` vererek çıktıyı geçici bir dizine yönlendir. Betiğin varsayılan hedefi depo içindeki G2 CSV'dir; bu dosyanın üzerine yazma.
 5. Varsayılan parametrelerle 260 satırın üretildiğini doğrula. Ayrıca farklı bir Pazartesi başlangıcı, tohum, hafta sayısı ve kampanya sayısı kullan; satır sayısının `hafta_sayisi * kampanya_sayisi` ile eşleştiğini kontrol et.
-6. Aynı parametrelerle iki ayrı çıktı üretip SHA-256 değerlerini karşılaştır. Aynı tohum aynı çıktıyı, farklı tohum ise farklı çıktıyı vermelidir.
+6. Aynı parametrelerle iki ayrı çıktı üretip SHA-256 değerlerini karşılaştır; aynı tohumla çıktıların aynı olduğunu doğrula. İstersen farklı tohumla ek bir karşılaştırma yapıp gözlemini kaydet, ancak farklı tohumların mutlaka farklı çıktı üretmesini sözlükte tanımlı bir kabul kuralı gibi sunma.
 7. `kampanya_sayisi` 5'ten küçükken betiğin ilk N sabit kanalı seçtiğini gözlemlersen bunu yeni bir hata olarak çoğaltma: açık Issue #53'ü kontrol et ve bulgunda bu Issue'ya bağla.
 8. Yalnızca fiilen çalıştırılan kontrolleri `tests/test-log.md` dosyasına tarih, girdi, sonuç ve durumla kaydet. Beklenen veya yürütülmemiş kontrolleri geçmiş gibi göstermeden bırak.
 9. Issue #45'e test özetini ve varsa ilgili Issue bağlantısını yaz. Commit alındıktan sonra commit hash'ini, değişen dosyaları ve prompt özetini ekle. Değişiklikleri ayrı dalda PR olarak sun; DQ onayı olmadan birleştirme.
