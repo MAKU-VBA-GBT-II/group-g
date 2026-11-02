@@ -1,52 +1,64 @@
 ---
 name: dq-analiz
-description: "Doğrulanmış G1 kampanya CSV dosyasından toplam, ortalama ve kanal metriklerini hesaplayıp analiz raporunu ve haftalık gelir trendini hazırlarken kullan."
+description: Doğrulanmış G2 parametreli kampanya simülasyonu CSV dosyasından 5 temel metriği hesaplayıp analiz raporunu ve bulguları hazırlarken kullan. DQ rolünün Görev 2 analitik değerlendirme görevi için kullanılır.
 ---
 
-# DQ Analiz Skill'i
+# dq-analiz: Görev 2 Metrik Hesabı ve Analitik Bulgular (DQ)
 
-## Ne yapar?
+## Amaç
+`data/kampanya-simulasyon-g2.csv` dosyasındaki 260 satırlık doğrulanmış simülasyon verisini okuyarak `docs/veri-sozlugu.md` şemasında tanımlanan 5 temel metriği (M1–M5) hesaplamak; bu metrikleri 1–2 cümlelik yorumlar, 3 somut veri gözlemi ve 1 uygulanabilir bütçe eylem önerisiyle birlikte `docs/analiz-g2.md` raporuna dönüştürmektir.
 
-Doğrulanmış `data/kampanya-performans.csv` ve `docs/veri-sozlugu-g1.md` temelinde kampanya performans metriklerini hesaplar, yorumları ve eylem önerisini `docs/analiz-g1.md` dosyasına yazar. Sonucu ilgili Issue'lara commit kanıtı ve devir teslim notuyla bildirir.
+## Ne Zaman Kullanılır?
+- BE simülasyon PR'ı birleştirildikten ve Issue #43'e `Veri hazır — commit <hash>` devir yorumu yazıldıktan sonra.
+- Simülasyon parametreleri değiştirilerek yeni veri üretildiğinde analizi ve raporu yeniden üretmek gerektiğinde.
+- FE görselleştirme sayılarıyla analiz raporu metriklerinin çapraz doğrulamasında.
 
-## Ne zaman kullanılır?
-
-- BE, `G1-Analiz` Issue'suna güncel veri commit'i ve satır sayısını içeren `Veri hazır — commit ...` yorumunu ekledikten sonra.
-- Kampanya verisi veya veri sözlüğü güncellendiğinde analizi yeniden üretirken.
-
-## Adımlar
-
-1. `AGENTS.md`, `docs/veri-sozlugu-g1.md` ve bu skill'deki iş akışını oku.
-2. `G1-Analiz` Issue'sunda BE'nin en son teslim yorumunu doğrula. Yorumdaki commit'in depoda bulunduğunu ve güncel `data/kampanya-performans.csv` ile şema sürümünün aynı teslimata ait olduğunu kontrol et. Teslim yoksa analize başlama.
-3. CSV'yi UTF-8 ve virgül ayraçlı olarak oku. Satır sayısı, sütun adları, kategori kümesi ve tutarların iki ondalık biçimini sözlükle karşılaştır. Uyumsuzluk varsa metrikleri teslim edilmiş gibi raporlama; önce DQ/BE üzerinden netleştir.
-4. Para toplamlarını ondalık aritmetik (`Decimal`) ile hesapla; ara adımlarda `float` kullanma. Gerekli metrikleri üret:
-   - toplam gelir (TL);
-   - kayıt/kampanya-hafta ROAS değerlerinin aritmetik ortalaması;
-   - kanala göre toplam gelir ve toplam gelir içindeki payı;
-   - kanala göre ROAS = kanal toplam geliri / kanal toplam harcaması;
-   - kanal ROAS'ına göre ilk üç kanal.
-5. Ortalama kampanya ROAS'ı ile birleşik ROAS'ı karıştırma. Gerekirse birleşik ROAS'ı toplam gelir / toplam harcama olarak ayrıca ver ve iki ölçünün neden farklı olabileceğini açıkla.
-6. Sonuçları `docs/analiz-g1.md` içine yaz. Her metriğe 1–2 cümlelik yorum, sayılara dayalı 3 somut gözlem ve tek, uygulanabilir bir eylem önerisi ekle. Verinin sentetik olduğunu ve gözlemsel sonuçların tek başına nedensellik göstermediğini belirt.
-7. Sayıları veri üzerinde tekrar hesaplayarak doğrula; metrik kategorilerinin toplamlarıyla genel toplamların tutarlılığını ve top-3 sırasını kontrol et.
-8. Skill'i, envanter satırını ve analiz raporunu commit edip depoya gönder. Commit hash'ini `G1-Analiz` Issue'suna kanıt olarak yaz. `G1-Görsel` Issue'suna şu biçimde devir teslim yorumu ekle: `Analiz hazır — commit <hash>. Dosya: docs/analiz-g1.md. Metrikler: <kısa liste>.`
-9. Başka bir rolün sahibi olduğu dosyada hata görürsen o dosyayı değiştirme. Kanıt ve yeniden üretme adımlarıyla `bug` etiketli bir Issue açıp dosyanın sahibine ata.
-10. Analizi aynı veriyle yeniden üretmek veya veri güncellendiğinde yenilemek için depo kökünde `python src/analiz_g1.py` komutunu çalıştır. Betik CSV şema kontrollerinden geçmezse hata verip raporu güncellemez.
-
-## Kullanılan dosyalar
-
+## Kullanılan Dosyalar
 | Dosya | Rol |
 |---|---|
-| `AGENTS.md` | Depo yönergeleri ve skill envanteri |
-| `docs/veri-sozlugu-g1.md` | Güncel veri şeması, kapsam ve kurallar |
-| `data/kampanya-performans.csv` | Analiz girdisi |
-| `docs/analiz-g1.md` | Metrik, yorum, gözlem ve eylem raporu |
-| `src/analiz_g1.py` | CSV'yi doğrulayan ve analiz raporunu yeniden üreten betik |
-| `skills/dq-analiz/SKILL.md` | Bu iş akışı |
+| `data/kampanya-simulasyon-g2.csv` | Girdi: 260 satır, 8 sütunluk doğrulanmış kampanya verisi |
+| `docs/veri-sozlugu.md` | Şema, kurallar ve M1–M5 metrik tanımları |
+| `src/analiz_g2.py` | Analizi yürüten ve raporu üreten Python betiği |
+| `docs/analiz-g2.md` | Çıktı: 5 metrik, yorumlar, 3 gözlem ve 1 eylem önerisi içeren analiz dokümanı |
+| `docs/requirements.md` | Ürünün amacı, yaptıkları ve yapmadıkları (1 sayfa) |
+| `visuals/` | FE tarafından üretilen 3 grafikle tutarlılık kontrolü |
 
-## Nasıl çalıştırılır?
+## Metrik Tanımları ve Formülleri
+1. **M1 — Toplam Harcama ve Gelir:** $\sum \text{harcama\_tl}$ ve $\sum \text{gelir\_tl}$ (TL cinsinden, 2 ondalıklı).
+2. **M2 — Bileşik ROAS ve Ortalama CPC:** $\frac{\sum \text{gelir\_tl}}{\sum \text{harcama\_tl}}$ (oran, x) ve $\frac{\sum \text{harcama\_tl}}{\sum \text{tiklama}}$ (TL/tıklama).
+3. **M3 — Haftalık Trend:** 52 haftalık zaman serisinde haftalık toplam gelir ve harcama seyri.
+4. **M4 — Kanal Kırılımı:** 5 kanal için kanal bazında birleşik ROAS ($\frac{\sum \text{gelir}}{\sum \text{harcama}}$) ve CTR ($\frac{\sum \text{tiklama}}{\sum \text{gosterim}} \times 100$).
+5. **M5 — Top-3 Zirve Kampanya:** Satır bazında $\frac{\text{gelir\_tl}}{\text{harcama\_tl}}$ oranına göre en yüksek getiri sağlayan 3 kayıt.
 
-VS Code ajanına şu isteği ver:
+## Çıktı Format Kuralları
+- **Veri Commit Bilgisi:** Raporun en üstünde kullanılan veri dosyasının commit hash'i yer almalıdır (`47cf641d611512a5ed84b36a1620e13af61c753b`).
+- **Para Formatı:** Tutarlar Türkçe formatta yazılır: binlik ayracı nokta, ondalık ayracı virgül (`1.891.414,54 TL`).
+- **Oran ve Sayılar:** ROAS iki ondalıklı çarpan olarak (`5,57x`), CTR yüzde olarak (`%2,42`) ifade edilir.
+- **Bulgular Bölümü:** Mutlaka **3 adet somut gözlem** ve **1 adet uygulanabilir eylem önerisi** içermelidir.
+- **Sentetiklik Notu:** Verilerin sentetik simülasyon ürünü olduğu ve KVKK/PII içermediği açıkça belirtilmelidir.
 
-> `dq-analiz` skill'ini kullan. Önce G1-Analiz Issue'sunda BE'nin güncel teslim yorumunu doğrula; ardından CSV'den metrikleri hesapla ve `docs/analiz-g1.md` dosyasını hazırla.
+## Çalıştırma Komutu
+Depo kökünden şu komut çalıştırılır:
+```bash
+python src/analiz_g2.py
+```
+Betik veri doğrulaması yapar, metrikleri hesaplar ve `docs/analiz-g2.md` dosyasını otomatik olarak oluşturur/günceller.
 
-Analizi yeniden üretmek için depo kökünden `python src/analiz_g1.py` çalıştır. Betik yalnızca Python standart kütüphanesini kullanır; veri teslimini doğrular, metrikleri `Decimal` ile hesaplar ve haftalık toplam gelir tablosunu da içeren `docs/analiz-g1.md` dosyasını yazar.
+## Örnek Girdi ve Çıktı
+### Örnek Girdi (`data/kampanya-simulasyon-g2.csv` satırı):
+```csv
+kampanya_id,tarih,kanal,gosterim,tiklama,donusum,harcama_tl,gelir_tl
+K079,2026-01-19,E-posta,6088,198,38,119.27,19162.72
+```
+
+### Örnek Çıktı (`docs/analiz-g2.md` M5 kesiti):
+```markdown
+| Sıra | Kampanya ID | Tarih (Hafta) | Kanal | Harcama | Gelir | ROAS |
+|---|---|---|---|---|---|---|
+| 1 | `K079` | 2026-01-19 | **E-posta** | 119,27 TL | 19.162,72 TL | **160.67x** |
+```
+
+## Reddetme Durumları
+1. **Gerçek Kişisel Veri Talebi:** İstekte veya girdi verisinde gerçek kişi adı, e-posta, telefon, T.C. kimlik numarası, kredi kartı veya IP adresi gibi KVKK/GDPR kapsamında tanımlayıcı veri bulunması durumunda işlem derhal reddedilir.
+2. **Eksik / Doğrulanmamış Veri:** Veri dosyası 260 satırdan az veya fazlaysa, sütun adları uyuşmuyorsa veya `harcama_tl <= 0` hataları varsa analiz yapılmaz.
+3. **BE Devir Yorumu Yoksa:** BE rolü ilgili Issue'ya `Veri hazır` devir yorumu yazmadan analize başlanmaz.
