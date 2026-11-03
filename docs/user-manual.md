@@ -51,8 +51,11 @@ Simülasyonu farklı senaryolar için özelleştirebilirsiniz:
 | `--tohum` | Tekrarlanabilirlik tohumu (seed) | `42` | `python src/simulasyon.py --tohum 123` |
 | `--hafta_sayisi` | Simüle edilecek hafta adedi (1-104) | `52` | `python src/simulasyon.py --hafta_sayisi 26` |
 | `--kampanya_sayisi`| Aktif kanal adedi (1-5) | `5` | `python src/simulasyon.py --kampanya_sayisi 3` |
+| `--kanallar` | Simüle edilecek belirli kanallar; verilirse adet otomatik belirlenir | Sözlükteki ilk 5 kanal | `python src/simulasyon.py --kanallar "E-posta" SEO` |
 | `--baslangic_tarihi`| Başlangıç Pazartesi günü | `2025-10-06` | `python src/simulasyon.py --baslangic_tarihi 2026-01-05` |
 | `--cikti` | Hedef CSV dosya yolu | `data/kampanya-simulasyon-g2.csv` | `python src/simulasyon.py --cikti data/ozel.csv` |
+
+`--kanallar` ile `--kampanya_sayisi` birlikte kullanıldığında adet seçilen kanal sayısıyla eşleşmelidir. Kanal adları sözlükteki sabit seçeneklerden olmalı ve tekrarlanmamalıdır.
 
 ---
 

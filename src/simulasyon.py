@@ -2,6 +2,7 @@
 
 Varsayılan çıktı: data/kampanya-simulasyon-g2.csv
 Örnek: python src/simulasyon.py --hafta_sayisi 10 --kampanya_sayisi 3
+       python src/simulasyon.py --kanallar "E-posta" SEO
 """
 
 import argparse
@@ -65,27 +66,57 @@ HEDEF = KOK / "data" / "kampanya-simulasyon-g2.csv"
 
 
 def parametreleri_dogrula(
-    tohum: int, hafta_sayisi: int, kampanya_sayisi: int, baslangic_tarihi: date
+    tohum: int,
+    hafta_sayisi: int,
+    kampanya_sayisi: int | None,
+    baslangic_tarihi: date,
+    kanal_adlari: list[str] | None = None,
 ) -> None:
     if tohum < 0:
         raise ValueError("tohum sıfır veya daha büyük olmalıdır")
     if not 1 <= hafta_sayisi <= 104:
         raise ValueError("hafta_sayisi 1 ile 104 arasında olmalıdır")
-    if not 1 <= kampanya_sayisi <= len(KANALLAR):
-        raise ValueError(f"kampanya_sayisi 1 ile {len(KANALLAR)} arasında olmalıdır")
     if baslangic_tarihi.weekday() != 0:
         raise ValueError("baslangic_tarihi bir Pazartesi olmalıdır")
+    secili_kanallari_belirle(kampanya_sayisi, kanal_adlari)
+
+
+def secili_kanallari_belirle(
+    kampanya_sayisi: int | None, kanal_adlari: list[str] | None
+) -> list[tuple[str, dict[str, tuple[int, int] | tuple[float, float]]]]:
+    if kanal_adlari is None:
+        sayi = len(KANALLAR) if kampanya_sayisi is None else kampanya_sayisi
+        if not 1 <= sayi <= len(KANALLAR):
+            raise ValueError(f"kampanya_sayisi 1 ile {len(KANALLAR)} arasında olmalıdır")
+        return list(KANALLAR.items())[:sayi]
+
+    if not kanal_adlari:
+        raise ValueError("en az bir kanal seçilmelidir")
+    if len(set(kanal_adlari)) != len(kanal_adlari):
+        raise ValueError("kanal listesinde yinelenen değer olamaz")
+    bilinmeyenler = [ad for ad in kanal_adlari if ad not in KANALLAR]
+    if bilinmeyenler:
+        raise ValueError(f"geçersiz kanal adı: {', '.join(bilinmeyenler)}")
+    if kampanya_sayisi is not None and kampanya_sayisi != len(kanal_adlari):
+        raise ValueError(
+            "kampanya_sayisi, --kanallar ile seçilen kanal sayısıyla eşleşmelidir"
+        )
+    return [(ad, KANALLAR[ad]) for ad in kanal_adlari]
 
 
 def satirlari_uret(
     tohum: int,
     hafta_sayisi: int,
-    kampanya_sayisi: int,
+    kampanya_sayisi: int | None,
     baslangic_tarihi: date,
+    kanal_adlari: list[str] | None = None,
 ) -> list[list[str]]:
-    parametreleri_dogrula(tohum, hafta_sayisi, kampanya_sayisi, baslangic_tarihi)
+    parametreleri_dogrula(
+        tohum, hafta_sayisi, kampanya_sayisi, baslangic_tarihi, kanal_adlari
+    )
     rng = random.Random(tohum)
-    secili_kanallar = list(KANALLAR.items())[:kampanya_sayisi]
+    secili_kanallar = secili_kanallari_belirle(kampanya_sayisi, kanal_adlari)
+    kampanya_sayisi = len(secili_kanallar)
     satirlar = []
     sayac = 1
 
@@ -122,11 +153,15 @@ def satirlari_dogrula(
     satirlar: list[list[str]],
     tohum: int,
     hafta_sayisi: int,
-    kampanya_sayisi: int,
+    kampanya_sayisi: int | None,
     baslangic_tarihi: date,
+    kanal_adlari: list[str] | None = None,
 ) -> None:
-    parametreleri_dogrula(tohum, hafta_sayisi, kampanya_sayisi, baslangic_tarihi)
-    kanallar = list(KANALLAR.items())[:kampanya_sayisi]
+    parametreleri_dogrula(
+        tohum, hafta_sayisi, kampanya_sayisi, baslangic_tarihi, kanal_adlari
+    )
+    kanallar = secili_kanallari_belirle(kampanya_sayisi, kanal_adlari)
+    kampanya_sayisi = len(kanallar)
     beklenen_satir = hafta_sayisi * kampanya_sayisi
     if len(satirlar) != beklenen_satir:
         raise ValueError(f"satır sayısı {beklenen_satir} olmalı; bulunan {len(satirlar)}")
@@ -197,8 +232,9 @@ def dosyayi_yaz_ve_dogrula(
     hedef: Path,
     tohum: int,
     hafta_sayisi: int,
-    kampanya_sayisi: int,
+    kampanya_sayisi: int | None,
     baslangic_tarihi: date,
+    kanal_adlari: list[str] | None = None,
 ) -> None:
     hedef.parent.mkdir(parents=True, exist_ok=True)
     with hedef.open("w", encoding="utf-8", newline="") as dosya:
@@ -211,7 +247,12 @@ def dosyayi_yaz_ve_dogrula(
     if not icerik or icerik[0] != BASLIK:
         raise ValueError("yazılan CSV başlığı veri sözlüğüyle uyuşmuyor")
     satirlari_dogrula(
-        icerik[1:], tohum, hafta_sayisi, kampanya_sayisi, baslangic_tarihi
+        icerik[1:],
+        tohum,
+        hafta_sayisi,
+        kampanya_sayisi,
+        baslangic_tarihi,
+        kanal_adlari,
     )
 
 
@@ -219,8 +260,12 @@ def argumanlari_oku() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="G2 kampanya simülasyonu")
     parser.add_argument("--tohum", type=int, default=42)
     parser.add_argument("--hafta_sayisi", "--hafta-sayisi", type=int, default=52)
+    parser.add_argument("--kampanya_sayisi", "--kampanya-sayisi", type=int)
     parser.add_argument(
-        "--kampanya_sayisi", "--kampanya-sayisi", type=int, default=5
+        "--kanallar",
+        nargs="+",
+        choices=list(KANALLAR),
+        help="Simüle edilecek kanallar; örnek: --kanallar E-posta SEO",
     )
     parser.add_argument(
         "--baslangic_tarihi",
@@ -244,6 +289,7 @@ def main() -> None:
         args.hafta_sayisi,
         args.kampanya_sayisi,
         args.baslangic_tarihi,
+        args.kanallar,
     )
     satirlari_dogrula(
         satirlar,
@@ -251,6 +297,7 @@ def main() -> None:
         args.hafta_sayisi,
         args.kampanya_sayisi,
         args.baslangic_tarihi,
+        args.kanallar,
     )
     dosyayi_yaz_ve_dogrula(
         satirlar,
@@ -259,6 +306,7 @@ def main() -> None:
         args.hafta_sayisi,
         args.kampanya_sayisi,
         args.baslangic_tarihi,
+        args.kanallar,
     )
     print(f"{len(satirlar)} satır yazıldı ve doğrulandı: {args.cikti}")
 
