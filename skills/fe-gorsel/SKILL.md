@@ -53,7 +53,13 @@ Görev 1'in grafikleri (`visuals/gelir-zaman-serisi.png`, `visuals/kanal-kirilim
 Deponun kök klasöründe:
 ```bash
 python src/grafik_uret.py
+python src/grafik_uret.py --veri data/senaryo_10_hafta.csv --cikti_dizini visuals/senaryo
 ```
+Argümanlar (hepsi isteğe bağlı):
+- `--veri`: okunacak CSV (varsayılan: `data/kampanya-simulasyon-g2.csv`, yoksa G1 verisi)
+- `--cikti_dizini`: PNG'lerin yazılacağı klasör (varsayılan: `visuals/`)
+
+Veri dosyası yoksa ya da gerekli sütunlar eksikse betik hata mesajı verip durur, grafik üretmez.
 Gerekli paketler: `pandas`, `matplotlib` (`pip install pandas matplotlib`).
 
 ## Örnek giriş / çıktı
