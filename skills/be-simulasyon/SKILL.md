@@ -16,12 +16,12 @@ Bu skill, Görev 2 veri sözlüğünü uygulayan `src/simulasyon.py` simülatör
 - Varsayılan boyut: 260 veri satırı ve bir başlık satırı
 - Başlık: `kampanya_id,tarih,kanal,gosterim,tiklama,donusum,harcama_tl,gelir_tl`
 
-`kampanya_sayisi`, sözlükteki kanal listesinden simüle edilecek kanal adedidir. Geçerli aralıklar `tohum >= 0`, `hafta_sayisi` 1–104, `kampanya_sayisi` 1–5 ve Pazartesi olan `baslangic_tarihi` değeridir.
+`kampanya_sayisi`, simüle edilecek kanal adedidir. İsteğe bağlı `--kanallar` ile belirli kanallar seçilebilir; bu durumda sayı seçilen kanal adedinden çıkarılır. İkisi birlikte verilirse sayıları eşleşmelidir. Yinelenen veya sözlükte bulunmayan kanal adları kabul edilmez. Geçerli aralıklar `tohum >= 0`, `hafta_sayisi` 1–104, `kampanya_sayisi` 1–5 ve Pazartesi olan `baslangic_tarihi` değeridir.
 
 ## Adımlar
 1. `AGENTS.md` ve `docs/veri-sozlugu.md` dosyalarını oku; alan adlarını, sıralamayı, kanal aralıklarını, formülleri ve parametre varsayılanlarını buradan al.
 2. `src/simulasyon.py` içinde bu dosya yolunu ve CLI parametrelerini kullan. Rastgele değerleri yalnızca `random.Random(tohum)` nesnesinden üret.
-3. Her hafta seçilen kanalları sözlük sırasıyla üret. `kampanya_id` değerlerini `K001` biçiminden başlayarak sıra ile ata.
+3. `--kanallar` verilmişse tam o kanalları belirtilen sırayla üret; verilmemişse `kampanya_sayisi` kadar ilk kanalı sözlük sırasıyla kullan. `kampanya_id` değerlerini `K001` biçiminden başlayarak sıra ile ata.
 4. `tiklama`, `donusum`, `harcama_tl` ve `gelir_tl` değerlerini sözlükteki aralıklardan ve formüllerden türet. Tutarları CSV'ye daima iki ondalık basamakla yaz.
 5. CSV'yi UTF-8, virgül ayraçlı ve `\n` satır sonlu üret. Gerçek kişi, kurum veya kimlik bilgisi ekleme.
 6. Yazmadan önce ve dosyayı geri okuyunca en az şu kontrolleri yap: tam satır sayısı (`hafta_sayisi × kampanya_sayisi`), tam ve sıralı 8 sütun, benzersiz `kampanya_id`, hafta-kanal çiftlerinin tekilliği, tarih ve kanal sırası, kanalın gösterim aralığı, sayısal ilişkiler, tutar aralıkları ve iki ondalık basamak.
@@ -45,6 +45,14 @@ python src/simulasyon.py --tohum 42 --hafta_sayisi 10 --kampanya_sayisi 3
 ```
 
 Bu örnekte beklenen boyut 30 veri satırıdır; aynı parametreler her çalıştırmada aynı CSV'yi üretmelidir.
+
+Belirli kanalları seçmek için:
+
+```text
+python src/simulasyon.py --hafta_sayisi 10 --kanallar "E-posta" SEO
+```
+
+Bu örnekte kampanya sayısı otomatik olarak 2, beklenen boyut 20 satırdır. `Google Ads` ve `Meta Ads` gibi boşluk içeren kanal adlarını tırnak içine alın.
 
 ## Örnek giriş ve çıkış
 

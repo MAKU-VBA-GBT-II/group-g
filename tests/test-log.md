@@ -24,6 +24,19 @@ Görev 2 mini ürününün `main` dalındaki tüm bileşenleri (`data/kampanya-s
 
 ---
 
+## Issue #53 Kanal Seçimi Regresyon Koşumu — 2026-11-03 (BE)
+
+| Kontrol | Girdi | Gerçekleşen Sonuç | Durum |
+|---|---|---|---|
+| Belirli kanalların seçimi | `--hafta_sayisi 2 --kanallar "E-posta" SEO` | 4 satır üretildi; yalnızca `E-posta` ve `SEO` çıktı, her hafta kanal sırası korundu. | **Geçti** |
+| Eski adet parametresi | `--hafta_sayisi 2 --kampanya_sayisi 2` | 4 satır üretildi; eski kullanım ilk iki kanalı üretmeye devam etti. | **Geçti** |
+| Kanal adedi uyumsuzluğu | `--kampanya_sayisi 1 --kanallar "E-posta" SEO` | Açıklayıcı `ValueError` ile reddedildi. | **Geçti** |
+| Varsayılan veri geriye uyumluluğu | Varsayılan tohum ve parametrelerle iki üretim | 260 satır ve mevcut varsayılan CSV ile aynı SHA-256 üretildi. | **Geçti** |
+
+İlgili hata kaydı: [#53](https://github.com/MAKU-VBA-GBT-II/group-g/issues/53). Testler `fix/channel-selection` dalındaki değişiklik üzerinde çalıştırılmıştır.
+
+---
+
 ## Junior Ön İnceleme — 2026-11-03 (Görev 2)
 
 | Kontrol | Girdi | Gerçekleşen Sonuç | Durum / Not |
