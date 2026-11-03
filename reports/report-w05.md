@@ -1,4 +1,4 @@
-# Sprint Raporu - Hafta 06 (28.10–03.11.2026)
+# Sprint Raporu - Hafta 05 (28.10–03.11.2026)
 
 **Grup:** G — PrimeBee (Dijital Pazarlama) · **PM:** Dilara Başer
 
@@ -62,7 +62,7 @@
 
 | Üye | Görev 2 Rolü | PR & Commit Katkısı | Kapattığı / Teslim Ettiği İşler | Açık Kalan Issue |
 |---|---|---|---|:---:|
-| **Dilara Başer** | PM (Lider) | `37b27db`, PR #46, `report-w06.md` | Sprint koordinasyonu, pano hijyeni, #57 ve #58 inceleme/kapanışı, sprint raporu | 0 |
+| **Dilara Başer** | PM (Lider) | `37b27db`, PR #46, `report-w05.md` | Sprint koordinasyonu, pano hijyeni, #57 ve #58 inceleme/kapanışı, sprint raporu | 0 |
 | **Nuri Enes Seyhan** | BE | `da6f979`, `3782821`, PR #49, PR #59 | #41 (G2-veri), #53 (kanal seçimi kısıtı), `src/simulasyon.py`, `tests/test_simulasyon.py` | 0 |
 | **Tuana Gürkan** | DQ | `c466124`, `abac5de`, `e354786`, `023c139`, PR #47, #48, #51, #54 | #40 (şema), #43 (analiz), #44 (test), `analiz_g2.py`, `requirements.md`, `user-manual.md`, PR onayları | 0 |
 | **Özge Nur Doğu** | FE | `5604af0`, `98f0516`, `3aea495`, `195f56b`, PR #50, PR #55 | #42 (görsel), #52 (grafik CLI desteği), `src/grafik_uret.py`, 3 PNG grafik seti | 0 |
