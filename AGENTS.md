@@ -6,7 +6,7 @@ Bu dosya, PrimeBee ekibinin skill envanteridir: hangi skill nerede, kime ait ve 
 
 - **Şirket:** PrimeBee — Grup G · **Sektör:** Dijital pazarlama
 - **Teknoloji:** Python · pandas · matplotlib (görselleştirme: PNG)
-- **Dönem planı:** [ders/AGENTS.md](https://github.com/MAKU-VBA-GBT-II/ders/blob/main/AGENTS.md)
+- **Dönem planı:** [MAKU-VBA-GBT-II/ders](https://github.com/MAKU-VBA-GBT-II/ders)
 - **Klasörler:** `src/` kod · `data/` veri · `visuals/` grafikler · `docs/` sözlük ve analiz · `tests/` test senaryoları ve kayıtları · `reports/` sprint raporları · `skills/` ajan skill'leri
 
 ## Görev 2 Rol Dağılımı ve Rotasyon (Dönem Planı §1.3)
