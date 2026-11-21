@@ -52,7 +52,7 @@ Grubumuzdaki 5 üyenin görev dağılımı ve kullanacakları yerel yapay zekâ 
 
 | Ad Soyad | GitHub Kullanıcı Adı | Yeni Görev Rolü | Yapay Zekâ Aboneliği | Rol Sorumluluğu |
 |---|---|---|---|---|
-| **Dilara BAŞER** | `@baserdilara94-ui` | **Çekirdek ve Arayüz (PM / Lider)** | Gemini Pro (Advanced) | ACP bağlantısı, ajanları çalıştırma/mesaj taşıma, ayar ve ilerleme ekranı, oturum logları |
+| **Dilara BAŞER** | `@baserdilara94-ui` | **Çekirdek ve Arayüz (PM / Lider)** | Gemini Pro (Google Antigravity İstemcisi) | ACP bağlantısı, ajanları çalıştırma/mesaj taşıma, ayar ve ilerleme ekranı, oturum logları |
 | **Ceren DOĞRUL** | `@cerendogrul120-byte` | **Çekirdek ve Arayüz Desteği (Junior)** | Gemini Plus & Claude (Ücretsiz) | Çekirdek log mekanizması, oturum kayıtlarının doğrulanması ve arayüz testleri |
 | **Tuana GÜRKAN** | `@tuanagurkan77` | **Ajan 1** | Gemini Plus | Web verisi alma skill'i, Playwright/tarayıcı otomasyonu, veri doğrulama ve teslim skill'i |
 | **Özge Nur DOĞU** | `@Ozge-nur` | **Ajan 2** | Claude (Ücretsiz) | Şirket sentetik verisi birleştirme, metin üretme ve benzerlik hesaplama skill'i |
@@ -63,5 +63,5 @@ Grubumuzdaki 5 üyenin görev dağılımı ve kullanacakları yerel yapay zekâ 
 ## 5. Çekirdek ve Arayüz Mimarisi (ACP İlkeleri)
 
 * **Protokol:** Program ajanlarla ACP (Agent Client Protocol) üzerinden iletişim kuracaktır.
-* **Sıfır API Anahtarı Prensibi:** Program kodunda hiçbir API anahtarı (OpenAI, Anthropic, Google vb.) saklanmaz. Sistem, öğretim elemanının veya kullanıcının bilgisayarında kurulu olan yerel istemciyi (Vibe, Claude Code veya Codex/Gemini) kullanır.
+* **Sıfır API Anahtarı Prensibi:** Program kodunda hiçbir API anahtarı (OpenAI, Anthropic, Google vb.) saklanmaz. Sistem, öğretim elemanının veya kullanıcının bilgisayarında kurulu olan yerel istemciyi (Google Antigravity, Mistral Vibe, Claude Code veya Codex) kullanır.
 * **Oturum ve Araç İzleri:** Ajanların çalıştırdığı her komut, açtığı her sayfa ve yürüttüğü her Python betiği Çekirdek tarafından oturum logunda (`logs/session.jsonl`) şeffaf olarak tutulacaktır.
