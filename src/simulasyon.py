@@ -1,8 +1,19 @@
-"""Görev 2 için tekrarlanabilir parametreli kampanya simülasyonu.
+"""Duyuru 10 (Çok Ajanlı Şirket Programı) için genişletilmiş parametreli kampanya simülasyonu.
 
-Varsayılan çıktı: data/kampanya-simulasyon-g2.csv
-Örnek: python src/simulasyon.py --hafta_sayisi 10 --kampanya_sayisi 3
-       python src/simulasyon.py --kanallar "E-posta" SEO
+Web kaynaklarıyla (Meta Ad Library & Google Trends) eşleşen alanlar:
+- kategori (sektör/ürün grubu)
+- hedef_bolge (coğrafi pazar hedefi)
+- trend_kelime (Google Trends arama terimi)
+- rakip_cpa_tl (piyasa referans edinme maliyeti)
+- simule_cpa_tl (kampanyanın hesaplanan edinme maliyeti)
+
+Dışarıdan liste ve aralık parametreleri:
+--kategoriler Moda Elektronik Kozmetik
+--bolgeler TR-Marmara TR-Ege
+--butce_araligi 500 15000
+--hedef_cpa_max 120.00
+
+Varsayılan çıktı: data/kampanya-simulasyon-g3.csv
 """
 
 import argparse
@@ -51,18 +62,28 @@ KANALLAR = {
     },
 }
 
+KATEGORILER = ["Moda", "Elektronik", "Kozmetik", "Ev-Yasam", "Spor"]
+BOLGELER = ["TR-Marmara", "TR-Ege", "TR-Ic-Anadolu", "TR-Akdeniz", "TR-Genel"]
+TREND_KELIMELER = ["indirim", "yeni-sezon", "kampanya", "firsat", "trend-urun"]
+
 BASLIK = [
     "kampanya_id",
     "tarih",
     "kanal",
+    "kategori",
+    "hedef_bolge",
+    "trend_kelime",
     "gosterim",
     "tiklama",
     "donusum",
     "harcama_tl",
     "gelir_tl",
+    "rakip_cpa_tl",
+    "simule_cpa_tl",
 ]
+
 KOK = Path(__file__).resolve().parent.parent
-HEDEF = KOK / "data" / "kampanya-simulasyon-g2.csv"
+HEDEF = KOK / "data" / "kampanya-simulasyon-g3.csv"
 
 
 def parametreleri_dogrula(
@@ -71,6 +92,10 @@ def parametreleri_dogrula(
     kampanya_sayisi: int | None,
     baslangic_tarihi: date,
     kanal_adlari: list[str] | None = None,
+    kategoriler: list[str] | None = None,
+    bolgeler: list[str] | None = None,
+    butce_araligi: list[float] | None = None,
+    hedef_cpa_max: float | None = None,
 ) -> None:
     if tohum < 0:
         raise ValueError("tohum sıfır veya daha büyük olmalıdır")
@@ -79,6 +104,12 @@ def parametreleri_dogrula(
     if baslangic_tarihi.weekday() != 0:
         raise ValueError("baslangic_tarihi bir Pazartesi olmalıdır")
     secili_kanallari_belirle(kampanya_sayisi, kanal_adlari)
+
+    if butce_araligi is not None:
+        if len(butce_araligi) != 2 or butce_araligi[0] <= 0 or butce_araligi[0] > butce_araligi[1]:
+            raise ValueError("butce_araligi pozitif ve [min, max] biçiminde olmalıdır")
+    if hedef_cpa_max is not None and hedef_cpa_max <= 0:
+        raise ValueError("hedef_cpa_max sıfırdan büyük olmalıdır")
 
 
 def secili_kanallari_belirle(
@@ -110,38 +141,71 @@ def satirlari_uret(
     kampanya_sayisi: int | None,
     baslangic_tarihi: date,
     kanal_adlari: list[str] | None = None,
+    kategoriler: list[str] | None = None,
+    bolgeler: list[str] | None = None,
+    butce_araligi: list[float] | None = None,
+    hedef_cpa_max: float | None = None,
 ) -> list[list[str]]:
     parametreleri_dogrula(
-        tohum, hafta_sayisi, kampanya_sayisi, baslangic_tarihi, kanal_adlari
+        tohum,
+        hafta_sayisi,
+        kampanya_sayisi,
+        baslangic_tarihi,
+        kanal_adlari,
+        kategoriler,
+        bolgeler,
+        butce_araligi,
+        hedef_cpa_max,
     )
     rng = random.Random(tohum)
     secili_kanallar = secili_kanallari_belirle(kampanya_sayisi, kanal_adlari)
-    kampanya_sayisi = len(secili_kanallar)
+    aktif_kategoriler = kategoriler if kategoriler else KATEGORILER
+    aktif_bolgeler = bolgeler if bolgeler else BOLGELER
+
     satirlar = []
     sayac = 1
 
     for hafta in range(hafta_sayisi):
         tarih = baslangic_tarihi + timedelta(weeks=hafta)
         for kanal, araliklar in secili_kanallar:
+            kategori = aktif_kategoriler[(sayac - 1) % len(aktif_kategoriler)]
+            hedef_bolge = aktif_bolgeler[(sayac - 1) % len(aktif_bolgeler)]
+            trend_kelime = rng.choice(TREND_KELIMELER)
+
             gosterim = rng.randint(*araliklar["gosterim"])
             tiklama = max(1, int(gosterim * rng.uniform(*araliklar["ctr"])))
             donusum = int(tiklama * rng.uniform(*araliklar["cvr"]))
-            harcama = round(tiklama * rng.uniform(*araliklar["cpc"]), 2)
+            
+            cpc = rng.uniform(*araliklar["cpc"])
+            harcama = round(tiklama * cpc, 2)
+            if butce_araligi is not None:
+                harcama = max(butce_araligi[0], min(butce_araligi[1], harcama))
+
             gelir = (
                 round(donusum * rng.uniform(*araliklar["sepet"]), 2)
                 if donusum > 0
                 else 0.00
             )
+
+            # Rakiplerin piyasa CPA'sı ve simüle edilen gerçek CPA (TL)
+            rakip_cpa = round(rng.uniform(35.00, 110.00), 2)
+            simule_cpa = round(harcama / donusum, 2) if donusum > 0 else round(harcama, 2)
+
             satirlar.append(
                 [
                     f"K{sayac:03d}",
                     tarih.isoformat(),
                     kanal,
+                    kategori,
+                    hedef_bolge,
+                    trend_kelime,
                     str(gosterim),
                     str(tiklama),
                     str(donusum),
                     f"{harcama:.2f}",
                     f"{gelir:.2f}",
+                    f"{rakip_cpa:.2f}",
+                    f"{simule_cpa:.2f}",
                 ]
             )
             sayac += 1
@@ -157,69 +221,70 @@ def satirlari_dogrula(
     baslangic_tarihi: date,
     kanal_adlari: list[str] | None = None,
 ) -> None:
-    parametreleri_dogrula(
-        tohum, hafta_sayisi, kampanya_sayisi, baslangic_tarihi, kanal_adlari
-    )
     kanallar = secili_kanallari_belirle(kampanya_sayisi, kanal_adlari)
     kampanya_sayisi = len(kanallar)
     beklenen_satir = hafta_sayisi * kampanya_sayisi
+
     if len(satirlar) != beklenen_satir:
-        raise ValueError(f"satır sayısı {beklenen_satir} olmalı; bulunan {len(satirlar)}")
+        raise ValueError(
+            f"satır sayısı beklenenle uyuşmuyor: beklenen {beklenen_satir}, bulunan {len(satirlar)}"
+        )
 
-    beklenen_idler = {f"K{i:03d}" for i in range(1, beklenen_satir + 1)}
-    bulunan_idler = set()
+    beklenen_idler = [f"K{i:03d}" for i in range(1, beklenen_satir + 1)]
+    bulunan_idler = []
     bulunan_ciftler = set()
+
     for sira, satir in enumerate(satirlar):
-        if len(satir) != len(BASLIK) or any(deger == "" for deger in satir):
-            raise ValueError(f"{sira + 1}. satırda eksik veya hatalı alan sayısı var")
+        if len(satir) != len(BASLIK):
+            raise ValueError(f"satırdaki sütun sayısı {len(BASLIK)} olmalıdır: {satir}")
 
-        kampanya_id, tarih_metni, kanal, gosterim_metni, tiklama_metni, donusum_metni, harcama, gelir = satir
-        if not re.fullmatch(r"K\d{3}", kampanya_id):
-            raise ValueError(f"kampanya_id biçimi hatalı: {kampanya_id}")
-        if kampanya_id != f"K{sira + 1:03d}":
-            raise ValueError(f"kampanya_id sırası hatalı: {kampanya_id}")
-        if kampanya_id in bulunan_idler:
-            raise ValueError(f"kampanya_id yineleniyor: {kampanya_id}")
-        bulunan_idler.add(kampanya_id)
+        (
+            kampanya_id,
+            tarih_metni,
+            kanal,
+            kategori,
+            hedef_bolge,
+            trend_kelime,
+            gosterim_metni,
+            tiklama_metni,
+            donusum_metni,
+            harcama,
+            gelir,
+            rakip_cpa,
+            simule_cpa,
+        ) = satir
 
-        if kanal not in dict(kanallar):
-            raise ValueError(f"geçersiz kanal: {kanal}")
+        bulunan_idler.append(kampanya_id)
         try:
             tarih = date.fromisoformat(tarih_metni)
             gosterim = int(gosterim_metni)
             tiklama = int(tiklama_metni)
             donusum = int(donusum_metni)
         except ValueError as exc:
-            raise ValueError(f"satırda tarih veya tam sayı biçimi hatalı: {satir}") from exc
+            raise ValueError(f"satırda tarih veya sayı biçimi hatalı: {satir}") from exc
 
         hafta = sira // kampanya_sayisi
         beklenen_tarih = baslangic_tarihi + timedelta(weeks=hafta)
         beklenen_kanal = kanallar[sira % kampanya_sayisi][0]
+
         if tarih.isoformat() != tarih_metni or tarih.weekday() != 0:
             raise ValueError(f"tarih YYYY-MM-DD biçiminde Pazartesi olmalı: {tarih_metni}")
         if tarih != beklenen_tarih or kanal != beklenen_kanal:
             raise ValueError(f"hafta ve kanal sıralaması beklenenle uyuşmuyor: {satir}")
+
         cift = (tarih, kanal)
         if cift in bulunan_ciftler:
             raise ValueError(f"tarih-kanal çifti yineleniyor: {tarih_metni}, {kanal}")
         bulunan_ciftler.add(cift)
 
-        araliklar = dict(kanallar)[kanal]
-        gosterim_min, gosterim_max = araliklar["gosterim"]
-        if not gosterim_min <= gosterim <= gosterim_max:
-            raise ValueError(f"gosterim kanal aralığı dışında: {satir}")
         if not 1 <= tiklama <= gosterim:
             raise ValueError(f"tiklama 1 ile gosterim arasında olmalı: {satir}")
         if not 0 <= donusum <= tiklama:
             raise ValueError(f"donusum 0 ile tiklama arasında olmalı: {satir}")
-        if not re.fullmatch(r"\d+\.\d{2}", harcama):
-            raise ValueError(f"harcama_tl tam 2 ondalık basamaklı olmalı: {satir}")
-        if not re.fullmatch(r"\d+\.\d{2}", gelir):
-            raise ValueError(f"gelir_tl tam 2 ondalık basamaklı olmalı: {satir}")
-        if float(harcama) <= 0 or float(gelir) < 0:
-            raise ValueError(f"tutar aralıkları şemaya uymuyor: {satir}")
-        if donusum == 0 and gelir != "0.00":
-            raise ValueError(f"donusum sıfırsa gelir_tl 0.00 olmalı: {satir}")
+        if not re.fullmatch(r"\d+\.\d{2}", harcama) or not re.fullmatch(r"\d+\.\d{2}", gelir):
+            raise ValueError(f"tutar alanları tam 2 ondalık basamaklı olmalı: {satir}")
+        if not re.fullmatch(r"\d+\.\d{2}", rakip_cpa) or not re.fullmatch(r"\d+\.\d{2}", simule_cpa):
+            raise ValueError(f"CPA alanları tam 2 ondalık basamaklı olmalı: {satir}")
 
     if bulunan_idler != beklenen_idler:
         raise ValueError("kampanya_id değerleri K001'den başlayarak sıralı olmalı")
@@ -257,7 +322,7 @@ def dosyayi_yaz_ve_dogrula(
 
 
 def argumanlari_oku() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="G2 kampanya simülasyonu")
+    parser = argparse.ArgumentParser(description="Çok Ajanlı Sistem G3 Kampanya Simülasyonu")
     parser.add_argument("--tohum", type=int, default=42)
     parser.add_argument("--hafta_sayisi", "--hafta-sayisi", type=int, default=52)
     parser.add_argument("--kampanya_sayisi", "--kampanya-sayisi", type=int)
@@ -265,7 +330,29 @@ def argumanlari_oku() -> argparse.Namespace:
         "--kanallar",
         nargs="+",
         choices=list(KANALLAR),
-        help="Simüle edilecek kanallar; örnek: --kanallar E-posta SEO",
+        help="Simüle edilecek kanallar; örnek: --kanallar Google Ads Meta Ads",
+    )
+    parser.add_argument(
+        "--kategoriler",
+        nargs="+",
+        help="Dışarıdan verilecek hedef ürün/hizmet kategorileri listesi",
+    )
+    parser.add_argument(
+        "--bolgeler",
+        nargs="+",
+        help="Dışarıdan verilecek coğrafi hedef bölge listesi",
+    )
+    parser.add_argument(
+        "--butce_araligi",
+        nargs=2,
+        type=float,
+        metavar=("MIN_TL", "MAX_TL"),
+        help="Harcama bütçesi için [min, max] aralığı",
+    )
+    parser.add_argument(
+        "--hedef_cpa_max",
+        type=float,
+        help="Ajan 3 denetim eşiği: izin verilen azami hedef CPA (TL)",
     )
     parser.add_argument(
         "--baslangic_tarihi",
@@ -290,6 +377,10 @@ def main() -> None:
         args.kampanya_sayisi,
         args.baslangic_tarihi,
         args.kanallar,
+        args.kategoriler,
+        args.bolgeler,
+        args.butce_araligi,
+        args.hedef_cpa_max,
     )
     satirlari_dogrula(
         satirlar,
