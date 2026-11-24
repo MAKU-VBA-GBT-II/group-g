@@ -1,72 +1,86 @@
 ---
 name: pm-rapor
-description: PrimeBee (Grup G) haftalık sprint raporunu reports/report-wXX.md dosyasına GitHub izlerinden (Issue, commit, pano) derler. Haftalık rapor yazılacağı zaman kullan.
+description: "PrimeBee (Grup G - Dijital Pazarlama) haftalık sprint süreçlerini GitHub kayıtlarından (Issue, PR, commit, test günlüğü) derleyerek standart sprint raporu (reports/report-wXX.md) üretir."
 ---
 
-# pm-rapor — Haftalık Sprint Raporu
+# PrimeBee Sprint Raporlama Sistemi (pm-rapor)
 
-> *Not: Bu skill, Grup A'nın pm-rapor skill'inden PrimeBee (Grup G - Dijital Pazarlama) ihtiyaçlarına uyarlanmıştır.*
+## Amaç
+Bu skill, PrimeBee (Grup G — Dijital Pazarlama) ekibinin haftalık sprint süreçlerini, ekip içi devir teslim zincirini ve geliştirme adımlarını GitHub üzerindeki somut kanıtlarla (Issue kayıtları, PR incelemeleri, commit özetleri ve test logları) belgeleyerek `reports/report-wXX.md` dosyasını üretir veya günceller. Raporlanan tüm bilgiler doğrulanabilir GitHub verilerine dayanır; tahmini veya kanıtsız bilgi içermez.
 
-**Ne yapar:** Belirtilen hafta için sprint raporunu depodaki gerçek izlere (Issue'lar, kanıt yorumları, commit'ler) dayanarak `reports/report-wXX.md` dosyasına yazar. Uydurma bilgi yazmaz; her iddia bir Issue numarasına veya commit hash'ine bağlanır.
+## Girdi ve Çıktı
 
-## Girdiler
+### Girdiler
+- **Hafta ve Dönem Bilgisi:** Hafta numarası (örn. `03`, `04`, `05`), sprint başlangıç ve bitiş tarihleri.
+- **Depo ve İzler:** `MAKU-VBA-GBT-II/group-g` deposu altındaki açık/kapalı Issue'lar, PR'lar ve `git log` geçmişi.
+- **Ekip Rolleri ve Görev Dağılımı:** `AGENTS.md` dosyasındaki güncel rol rotasyonu ve sorumluluk matrisi.
+- **Devir Teslim Kanıtları:** BE (Simülasyon/Veri) → DQ (Analiz/Şema) → FE (Görselleştirme) devir teslim yorumları.
+- **Test ve Hata Kayıtları:** `tests/test-log.md` dosyası ve açılan hata/iyileştirme kartları.
 
-- Hafta numarası (örn. `03`, `04`) ve hafta tarih aralığı
-- Depo: `MAKU-VBA-GBT-II/group-g`
-- O haftanın Issue'ları: G1-veri (#10), G1-analiz (#11), G1-görsel (#12), G1-test (#13), G1-junior (#14)
-- Commit geçmişi: `git log` veya GitHub API
+### Çıktı
+- `reports/report-wXX.md` (Markdown formatında haftalık sprint raporu).
 
-## Adımlar
+---
 
-1. **Planlananları topla:** Issue'ları listele (numara, başlık, atanan kişi, son tarih, kabul kriteri).
-2. **Yapılanları doğrula:** Her Issue için kanıt yorumunu ve ilgili commit'i bul. Kabul kriterini dosyayı açıp gerçekten say ve kontrol et, tahmin etme.
-3. **Devir teslim zincirini kontrol et:** BE→DQ/FE ("Veri hazır" yorumu) ve DQ→FE ("Analiz hazır" yorumu) var mı?
-4. **Tıkananları yaz:** Açık kalan Issue'lar, kaçırılan son tarihler, bekleyen devir teslimler, yaşanan teknik aksaklıklar ve veri/kod ezilmeleri.
-5. **Kim ne yaptı:** Her üye için commit sayısı ve kapattığı Issue'lar.
-6. Raporu şablonla `reports/report-wXX.md` olarak yaz; commit mesajı: `Hafta XX sprint raporu eklendi`.
+## Adım Adım İşleyiş
 
-## Şablon
+1. **Sprint Kapsamını Belirle:** İlgili haftaya ait planlanan tüm Issue'ları listele; numara, başlık, sorumlu üye ve kabul kriterlerini kaydet.
+2. **Çıktıları ve Kanıtları Denetle:** 
+   - Kapatılan her Issue için kanıt yorumunu (commit hash, dosya yolu, ekran görüntüsü veya test sonucu) doğrula.
+   - PR ile birleştirilen işlerde DQ/akran inceleme onayının (`Approved`) bulunup bulunmadığını kontrol et.
+3. **Devir Teslim Zincirini Doğrula:**
+   - BE'den DQ ve FE'ye veri aktarımı ("Veri hazır — commit ...") yapıldı mı?
+   - DQ'dan FE'ye analiz ve sözlük doğrulaması ("Analiz doğrulandı...") tamamlandı mı?
+   - Zincirde gecikme veya tıkanma olup olmadığını tespit et.
+4. **Teknik Risk ve Engelleri Belgele:** Yaşanan sürüm uyumsuzlukları, veri formatı uyuşmazlıkları, geciken onaylar veya kod çakışmalarını şeffaf şekilde listele.
+5. **Bireysel Katkıları Özetle:** Her üyenin (PM, BE, DQ, FE, Junior) hafta boyunca gerçekleştirdiği commit sayısını, kapattığı Issue'ları ve incelediği PR'ları tabloya aktar.
+6. **Raporu Üret ve Commit Et:** Derlenen bilgileri aşağıdaki şablona uygun olarak `reports/report-wXX.md` dosyasına yaz. Commit mesajı: `Hafta XX sprint raporu güncellendi`.
+
+---
+
+## Rapor Şablonu
 
 ```markdown
-# Sprint Raporu - Hafta XX (GG.AA–GG.AA.YYYY)
+# Sprint Raporu — Hafta XX (GG.AA–GG.AA.YYYY)
 
-**Grup:** G — PrimeBee (Dijital Pazarlama) · **PM:** Dilara Başer
-
-**Hazırlanma tarihi:** GG.AA.YYYY · **Son tarih:** GG.AA.YYYY
+**Şirket:** PrimeBee (Grup G — Dijital Pazarlama)  
+**Proje Lideri (PM):** Dilara Başer  
+**Tarih:** GG.AA.YYYY  
 
 ---
 
-## Planlanan
-| Issue | Başlık | Atanan | Kabul kriteri | Son tarih |
-|---|---|---|---|---|
+## 1. Planlanan Görevler
+| Issue | Görev Tanımı | Sorumlu | Kabul Kriteri | Durum |
+|:---:|:---|:---:|:---|:---:|
+| #XX | ... | @kullanici | ... | Tamamlandı / Devam Ediyor |
 
-## Yapılan
-| Issue | Kanıt (commit / dosya) | Durum |
-|---|---|---|
+## 2. Devir Teslim Zinciri ve İş Akışı
+- **BE → DQ / FE (Veri Devri):** [Yapıldı / Beklemede] — *Kanıt: Issue #... / Commit ...*
+- **DQ → FE (Şema ve Analiz Onayı):** [Yapıldı / Beklemede] — *Kanıt: Issue #... / PR #...*
+- **Junior Ön Kontrolü:** [Tamamlandı / Yapılmadı] — *Kanıt: Issue #...*
 
-## Devir teslim zinciri
-- BE → DQ/FE: ✓/✗
-- DQ → FE: ✓/✗
-- DQ onayı: ✓/✗
+## 3. Karşılaşılan Engeller ve Çözümler
+- **Teknik Aksaklıklar:** ...
+- **Süreç İyileştirmeleri:** ...
 
-## Tıkanan / riskler
-- …
+## 4. Ekip Katkı Matrisi
+| Üye | Rol | Commit Sayısı | İncelediği PR / Kapattığı Issue |
+|:---|:---:|:---:|:---|
+| Dilara Başer | PM | ... | ... |
+| Nuri Enes Seyhan | BE | ... | ... |
+| Ayşe Tuana Gürkan | DQ | ... | ... |
+| Özge Nur Doğu | FE | ... | ... |
+| Ceren Doğrul | Junior | ... | ... |
 
-## Kim ne yaptı
-| Üye | Rol | Commit | Kapattığı Issue |
-|---|---|---|---|
-
-## Gelecek hafta
-- …
+## 5. Gelecek Sprint Hedefleri
+- ...
 ```
 
-## Kullanılan dosyalar
+---
 
-- Okur: GitHub Issue'ları ve yorumları, `git log`, proje panosu
-- Yazar: `reports/report-wXX.md`
+## Nasıl Çalıştırılır
 
-## Nasıl çalıştırılır
+Ajana (Claude, Codex, Antigravity vb.) şu talimat verilir:
+> *"pm-rapor skill'ini kullanarak Hafta XX için reports/report-wXX.md dosyasını GitHub commit ve issue kayıtlarına göre derle."*
 
-Ajana (Claude, Codex vb.): **"pm-rapor skill'ini kullanarak Hafta XX için report-wXX.md yaz."**
-
-Ajan GitHub'a erişebiliyorsa Issue'ları, yorumları ve commit'leri kendisi okuyup raporu yazar. Araç: GitHub CLI (`gh issue list`, `gh issue view`, `git log`). Kullandığı araç ve model Issue kapanış yorumuna eklenir.
+Ajan, GitHub CLI (`gh`) veya `git log` araçlarını kullanarak depodaki gerçek izleri okur ve raporu şablona uygun olarak oluşturur. Kullanılan model ve komut özeti ilgili sprint kapanış Issue'suna eklenir.
