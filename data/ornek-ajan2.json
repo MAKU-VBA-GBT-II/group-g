@@ -1,0 +1,50 @@
+{
+  "durum": "onay",
+  "gonderen_ajan": "ajan2",
+  "hedef_ajan": "ajan3",
+  "zaman_damgasi": "2026-11-27T10:20:00Z",
+  "oneri_id": "PROP-202611-01",
+  "kaynak": "PrimeBee Sentetik + Meta Ad Library NLP",
+  "uretim_zamani": "2026-11-27T10:19:45Z",
+  "onerilen_kampanyalar": [
+    {
+      "kampanya_kodu": "CMP-OPT-01",
+      "kanal": "Meta Ads",
+      "kategori": "Moda",
+      "hedef_bolge": "TR-Marmara",
+      "uretilmis_baslik": "Kışa Özel Prime Koleksiyonu — %40 Avantajla",
+      "uretilmis_metin": "Soğuk günlerde tarzınızdan ödün vermeyin. Yeni sezon su geçirmez montlarda lansmana özel avantajlar.",
+      "benzerlik_skoru": 0.42,
+      "planlanan_harcama_tl": 4500.00,
+      "beklenen_donusum": 68,
+      "simule_cpa_tl": 66.18,
+      "hedef_cpa_max": 80.00
+    },
+    {
+      "kampanya_kodu": "CMP-OPT-02",
+      "kanal": "Google Ads",
+      "kategori": "Moda",
+      "hedef_bolge": "TR-Marmara",
+      "uretilmis_baslik": "Termal Konfor Şimdi Kapınızda — 3 Al 2 Öde",
+      "uretilmis_metin": "Kış soğuklarına karşı üstün koruma sağlayan termal giyim serisi sepette sürpriz hediyelerle sizi bekliyor.",
+      "benzerlik_skoru": 0.38,
+      "planlanan_harcama_tl": 3200.00,
+      "beklenen_donusum": 45,
+      "simule_cpa_tl": 71.11,
+      "hedef_cpa_max": 80.00
+    },
+    {
+      "kampanya_kodu": "CMP-OPT-03",
+      "kanal": "TikTok Ads",
+      "kategori": "Moda",
+      "hedef_bolge": "TR-Marmara",
+      "uretilmis_baslik": "Kışın En Çok Konuşulan Bot Modelleri",
+      "uretilmis_metin": "Kombinlerin vazgeçilmezi bot ve çizmeler tükenmeden sepete ekle, stilini yansıt.",
+      "benzerlik_skoru": 0.47,
+      "planlanan_harcama_tl": 2800.00,
+      "beklenen_donusum": 40,
+      "simule_cpa_tl": 70.00,
+      "hedef_cpa_max": 80.00
+    }
+  ]
+}
